@@ -44,8 +44,11 @@ def search_genres(game):
         try:
             cursor.execute("SELECT name FROM Genre WHERE name = ?;" (genre,))
         except TypeError:  # If not, add the genre in
-            cursor.execute("INSERT INTO Genre (name) VALUES (?);", (genre,))
-            conn.commit()
+            checking = cursor.fetchall()
+            print(checking)
+            if not checking:
+                cursor.execute("INSERT INTO Genre (name) VALUES (?);", (genre,))
+                conn.commit()
         # Add the genre and game ids into bridging table
         cursor.execute("SELECT id FROM Genre WHERE name = ?;", (genre,))
         genre_for_bridging = str(cursor.fetchone())[1:]
@@ -65,8 +68,10 @@ def search_developer(game):
         try:
             cursor.execute("SELECT name FROM Developer WHERE name = ?;" (dev,))
         except TypeError:  # If not, add the dev in
-            cursor.execute("INSERT INTO Developer (name) VALUES (?);", (dev,))
-            conn.commit()
+            checking = cursor.fetchall()
+            if not checking:
+                cursor.execute("INSERT INTO Developer (name) VALUES (?);", (dev,))
+                conn.commit()
         # Add the dev and game ids into bridging table
         cursor.execute("SELECT id FROM Developer WHERE name = ?;", (dev,))
         dev_for_bridging = str(cursor.fetchone())[1:]
@@ -86,8 +91,10 @@ def search_publisher(game):
         try:
             cursor.execute("SELECT name FROM Publisher WHERE name = ?;" (publisher,))
         except TypeError:  # If not, add the publisher in
-            cursor.execute("INSERT INTO Publisher (name) VALUES (?);", (publisher,))
-            conn.commit()
+            checking = cursor.fetchall()
+            if not checking:
+                cursor.execute("INSERT INTO Publisher (name) VALUES (?);", (publisher,))
+                conn.commit()
         # Add the publisher and game ids into bridging table
         cursor.execute("SELECT id FROM Publisher WHERE name = ?;", (publisher,))
         publisher_for_bridging = str(cursor.fetchone())[1:]
