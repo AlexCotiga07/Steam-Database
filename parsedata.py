@@ -54,9 +54,31 @@ def search_genres(game):
         conn.commit()
 
 
+def search_developer(game):
+    """Check if there are any new devs to add, add them,
+    and connect devs with game in bridging table"""
+    conn = sqlite3.connect("steam.db")
+    cursor = conn.cursor()
+    developers = game[4].split(";")
+    for dev in developers:
+        try:
+            cursor.execute("SELECT name FROM Developer WHERE name = ?;" (dev,))
+        except:  # If not, add the dev in
+            cursor.execute("INSERT INTO Developer (name) VALUES (?);", (dev,))
+            conn.commit()
+        # Add the dev and game ids into bridging table
+        cursor.execute("SELECT id FROM Developer WHERE name = ?;", (dev,))
+        dev_for_bridging = str(cursor.fetchone())[1:]
+        dev_for_bridging = dev_for_bridging[:-1]
+        dev_for_bridging = dev_for_bridging[:-1]
+        cursor.execute("INSERT INTO GameDeveloper VALUES (?, ?);", (game[0], dev_for_bridging))
+        conn.commit()
+
+
 with open("steam.csv", "r", encoding="utf8") as csvfile:
     csvreader = csv.reader(csvfile)
     for game in csvreader:
         # if game[0] == "279580":  # for testing
         search_game(game)
         search_genres(game)
+        search_developer(game)
