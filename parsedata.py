@@ -29,7 +29,7 @@ def search_game(game):
     averagept = game[14]
     medianpt = game[15]
     price = "%.2f" % (float(game[17])*2.08)
-    cursor.execute("INSERT INTO Game VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    cursor.execute("INSERT INTO Game VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                    (id, name, date, windows, mac, linux, minage, achievements, negatives, positives, averagept, medianpt, price,))
     conn.commit()
 
@@ -40,6 +40,7 @@ def search_genres(game):
     conn = sqlite3.connect("steam.db")
     cursor = conn.cursor()
     genres = game[9].split(";")
+    # check if genre already exists, if not add it
     for genre in genres:
         cursor.execute("SELECT name FROM Genre WHERE name=?;", (genre,))
         checking = cursor.fetchall()
@@ -49,6 +50,7 @@ def search_genres(game):
         # Add the genre and game ids into bridging table
         cursor.execute("SELECT id FROM Genre WHERE name=?;", (genre,))
         genre_for_bridging = cursor.fetchone()
+        # get rid of brackets and comma otherwise it's (1,)
         genre_for_bridging = str(genre_for_bridging)[1:]
         genre_for_bridging = genre_for_bridging[:-1]
         genre_for_bridging = genre_for_bridging[:-1]
@@ -62,6 +64,7 @@ def search_developer(game):
     conn = sqlite3.connect("steam.db")
     cursor = conn.cursor()
     developers = game[4].split(";")
+    # check if dev already exists, if not add it
     for dev in developers:
         cursor.execute("SELECT name FROM Developer WHERE name=?;", (dev,))
         checking = cursor.fetchall()
@@ -71,6 +74,7 @@ def search_developer(game):
         # Add the dev and game ids into bridging table
         cursor.execute("SELECT id FROM Developer WHERE name=?;", (dev,))
         dev_for_bridging = cursor.fetchone()
+        # get rid of brackets and comma otherwise it's (1,)
         dev_for_bridging = str(dev_for_bridging)[1:]
         dev_for_bridging = dev_for_bridging[:-1]
         dev_for_bridging = dev_for_bridging[:-1]
@@ -84,6 +88,7 @@ def search_publisher(game):
     conn = sqlite3.connect("steam.db")
     cursor = conn.cursor()
     publishers = game[5].split(";")
+    # check if publisher already exists, if not add it
     for publisher in publishers:
         cursor.execute("SELECT name FROM Publisher WHERE name=?;", (publisher,))
         checking = cursor.fetchall()
@@ -93,6 +98,7 @@ def search_publisher(game):
         # Add the publisher and game ids into bridging table
         cursor.execute("SELECT id FROM Publisher WHERE name=?;", (publisher,))
         publisher_for_bridging = cursor.fetchone()
+        # get rid of brackets and comma otherwise it's (1,)
         publisher_for_bridging = str(publisher_for_bridging)[1:]
         publisher_for_bridging = publisher_for_bridging[:-1]
         publisher_for_bridging = publisher_for_bridging[:-1]
@@ -100,6 +106,7 @@ def search_publisher(game):
         conn.commit()
 
 
+# Run it and add the data
 with open("steam.csv", "r", encoding="utf8") as csvfile:
     csvreader = csv.reader(csvfile)
     for game in csvreader:
