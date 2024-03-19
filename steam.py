@@ -30,7 +30,7 @@ def read_one(id):
     print()
     print("-"*30)
     print(f"{game_data[0]}   {percent_rating}%")
-    print(f"Release date (yyyy/mm/dd): {game_data[1]}")
+    print(f"Release date (yyyy-mm-dd): {game_data[1]}")
 
     # Minimum age
     if game_data[5] > 0:  # Only print if age restricited
@@ -43,7 +43,11 @@ def read_one(id):
     if game_data[11] == 0:
         print("FREE")
     else:
-        print(f"${game_data[11]}")
+        if str(game_data[11])[-2] == ".":
+            price = str(game_data[11]) + "0"
+            print(f"${price}")
+        else:
+            print(f"${game_data[11]}")
 
     print()
 
