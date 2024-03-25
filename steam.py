@@ -131,12 +131,52 @@ def show_genres():
     genres = cursor.fetchall()
 
     # Print the genres in a block
-    print("-"*34)
-    print(f"| {'ID':<3} | Genre")
-    print("-"*34)
+    print("-"*35)
+    print(f"| {'ID':<4} | Genre")
+    print("-"*35)
     for genre in genres:
-        print(f"| {genre[0]:<3} | {genre[1]}")
-    print("-"*34)
+        print(f"| {genre[0]:<4} | {genre[1]}")
+    print("-"*35)
+
+    conn.close()  # Close connection to save efficiency
+
+
+def show_developers():
+    """Show list of all developers"""
+    # Connect to database
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * \
+                    FROM Developer \
+                    ORDER BY name;")
+    developers = cursor.fetchall()
+
+    page = 1  # Because there's a lot of devs
+    continuing = True
+    while continuing == True:
+        amounts_min = (page-1)*50
+        amounts_max = page*50
+        dev_list = []
+        for i in range(50):
+            dev_list.append(developers[amounts_min])
+            amounts_min = amounts_min + 1
+        # Print the developers in a block
+        print("-"*36)
+        print(f"| {'ID':<5} | Developer")
+        print("-"*36)
+        for dev in dev_list:
+            print(f"| {dev[0]:<5} | {dev[1]}")
+        print("-"*36)
+        while True:
+            next = input("Type NEXT for next page, END to retrun to menu: ")
+            if next == "NEXT":
+                page = page + 1
+                break
+            elif next == "END":
+                continuing = False
+                break
+            else:
+                print("Invalid command, try again.")
 
     conn.close()  # Close connection to save efficiency
 
@@ -146,4 +186,5 @@ if __name__ == "__main__":
         read = input("Id of game: ")
         read_one(read)
         show_genres()
+        show_developers()
         break
