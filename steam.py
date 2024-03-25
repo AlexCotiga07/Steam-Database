@@ -1,10 +1,12 @@
 import sqlite3
 
+DATABASE_FILE = "steam.db"
+
 
 def read_one(id):
     """Display all data for a specified game by id"""
     # Connect to database
-    conn = sqlite3.connect("steam.db")
+    conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
     # Collect data from game table
     cursor.execute("SELECT name, \
@@ -27,19 +29,19 @@ def read_one(id):
     cursor.execute("SELECT Genre.name \
                     FROM Genre \
                         JOIN GameGenre ON GameGenre.genreid = Genre.id \
-                    WHERE GameGenre.gameid = ?", (id,))
+                    WHERE GameGenre.gameid = ?;", (id,))
     genre_data = cursor.fetchall()
     # Dev collection
     cursor.execute("SELECT Developer.name \
                     FROM Developer \
                         JOIN GameDeveloper ON GameDeveloper.devid = Developer.id \
-                    WHERE GameDeveloper.gameid = ?", (id,))
+                    WHERE GameDeveloper.gameid = ?;", (id,))
     dev_data = cursor.fetchall()
     # Publisher collection
     cursor.execute("SELECT Publisher.name \
                     FROM Publisher \
                         JOIN GamePublisher ON GamePublisher.publishid = Publisher.id \
-                    WHERE GamePublisher.gameid =?", (id,))
+                    WHERE GamePublisher.gameid =?;", (id,))
     publisher_data = cursor.fetchall()
 
     # Printing data
@@ -118,8 +120,30 @@ def read_one(id):
     conn.close()  # Close connection to save efficiency
 
 
+def show_genres():
+    """Show list of all genres"""
+    # Connect to database
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * \
+                    FROM Genre \
+                    ORDER BY name;")
+    genres = cursor.fetchall()
+
+    # Print the genres in a block
+    print("-"*34)
+    print(f"| {'ID':<3} | Genre")
+    print("-"*34)
+    for genre in genres:
+        print(f"| {genre[0]:<3} | {genre[1]}")
+    print("-"*34)
+
+    conn.close()  # Close connection to save efficiency
+
+
 if __name__ == "__main__":
     while True:
         read = input("Id of game: ")
         read_one(read)
+        show_genres()
         break
