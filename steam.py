@@ -31,10 +31,16 @@ def read_one(id):
     genre_data = cursor.fetchall()
     # Dev collection
     cursor.execute("SELECT Developer.name \
-                     FROM Developer \
+                    FROM Developer \
                         JOIN GameDeveloper ON GameDeveloper.devid = Developer.id \
-                     WHERE GameDeveloper.gameid = ?", (id,))
+                    WHERE GameDeveloper.gameid = ?", (id,))
     dev_data = cursor.fetchall()
+    # Publisher collection
+    cursor.execute("SELECT Publisher.name \
+                    FROM Publisher \
+                        JOIN GamePublisher ON GamePublisher.publishid = Publisher.id \
+                    WHERE GamePublisher.gameid =?", (id,))
+    publisher_data = cursor.fetchall()
 
     # Printing data
     # Name, release date, percentage
@@ -77,6 +83,13 @@ def read_one(id):
 
     print()
 
+    # Publishers
+    print("Publishers:")
+    for publisher in publisher_data:
+        print(publisher[0])
+
+    print()
+
     # Compatable systems
     compats = []  # Storing compatable systems
     if game_data[2] == 1:  # Check windows compatability
@@ -101,7 +114,7 @@ def read_one(id):
     else:
         print(f"Median playtime: {game_data[10]} hours")
 
-    # print(game_data)
+    print("-"*30)
     conn.close()  # Close connection to save efficiency
 
 
