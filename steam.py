@@ -29,6 +29,12 @@ def read_one(id):
                         JOIN GameGenre ON GameGenre.genreid = Genre.id \
                     WHERE GameGenre.gameid = ?", (id,))
     genre_data = cursor.fetchall()
+    # Dev collection
+    cursor.execute("SELECT Developer.name \
+                     FROM Developer \
+                        JOIN GameDeveloper ON GameDeveloper.devid = Developer.id \
+                     WHERE GameDeveloper.gameid = ?", (id,))
+    dev_data = cursor.fetchall()
 
     # Printing data
     # Name, release date, percentage
@@ -61,7 +67,14 @@ def read_one(id):
     print("Genres:")
     for genre in genre_data:
         print(genre[0])
-    
+
+    print()
+
+    # Developers
+    print("Developers:")
+    for dev in dev_data:
+        print(dev[0])
+
     print()
 
     # Compatable systems
