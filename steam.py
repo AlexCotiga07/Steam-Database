@@ -23,6 +23,12 @@ def read_one(id):
                     FROM Game \
                     WHERE id = ?;", (id,))
     game_data = cursor.fetchone()
+    # Genre collection
+    cursor.execute("SELECT Genre.name \
+                    FROM Genre \
+                        JOIN GameGenre ON GameGenre.genreid = Genre.id \
+                    WHERE GameGenre.gameid = ?", (id,))
+    genre_data = cursor.fetchall()
 
     # Printing data
     # Name, release date, percentage
@@ -49,6 +55,13 @@ def read_one(id):
         else:
             print(f"${game_data[11]}")
 
+    print()
+
+    # Genres
+    print("Genres:")
+    for genre in genre_data:
+        print(genre[0])
+    
     print()
 
     # Compatable systems
