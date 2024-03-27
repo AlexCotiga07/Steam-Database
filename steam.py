@@ -2,6 +2,7 @@ import sqlite3
 import math
 
 DATABASE_FILE = "steam.db"
+ITEMS_PER_PAGE = 40
 
 
 def read_one(id):
@@ -153,12 +154,12 @@ def show_developers():
     developers = cursor.fetchall()
 
     page = 1  # Because there's a lot of devs
-    max_pages = math.ceil((len(developers))/50)
+    max_pages = math.ceil((len(developers))/ITEMS_PER_PAGE)
     continuing = True
     while continuing is True:
-        amounts_min = (page-1)*50
+        amounts_min = (page-1)*ITEMS_PER_PAGE
         dev_list = []
-        for i in range(50):
+        for i in range(ITEMS_PER_PAGE):  # Just look at these of an amount
             dev_list.append(developers[amounts_min])
             amounts_min = amounts_min + 1
         # Print the developers in a block
@@ -168,6 +169,76 @@ def show_developers():
         for dev in dev_list:
             print(f"| {dev[0]:<5} | {dev[1]}")
         print("-"*36)
+
+        # Page switching
+        if page == 1:
+            while True:
+                next = input("Type NEXT for next page, END to retrun to menu: ")
+                if next == "NEXT":
+                    page = page + 1
+                    break
+                elif next == "END":
+                    continuing = False
+                    break
+                else:
+                    print("Invalid command, try again.")
+        elif page == max_pages:
+            while True:
+                next = input("Type BACK for previous page, END to retrun to menu: ")
+                if next == "BACK":
+                    page = page - 1
+                    break
+                elif next == "END":
+                    continuing = False
+                    break
+                else:
+                    print("Invalid command, try again.")
+        else:
+            while True:
+                next = input("Type NEXT for next page, BACK for previous page, END to retrun to menu: ")
+                if next == "NEXT":
+                    page = page + 1
+                    break
+                elif next == "BACK":
+                    page = page - 1
+                    break
+                elif next == "END":
+                    continuing = False
+                    break
+                else:
+                    print("Invalid command, try again.")
+
+    conn.close()  # Close connection to save efficiency
+
+
+def show_publishers():
+    """Show list of all publishers"""
+    # Connect to database
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * \
+                    FROM Publisher \
+                    ORDER BY name;")
+    publishers = cursor.fetchall()
+
+    page = 1  # Because there's a lot of publishers
+    max_pages = math.ceil((len(publishers))/ITEMS_PER_PAGE)
+    continuing = True
+    while continuing is True:
+        amounts_min = (page-1)*ITEMS_PER_PAGE
+        publisher_list = []
+        for i in range(ITEMS_PER_PAGE):  # Just look at these of an amount
+            publisher_list.append(publishers[amounts_min])
+            amounts_min = amounts_min + 1
+        # Print the publishers in a block
+        print("-"*36)
+        print(f"| {'ID':<5} | Publisher")
+        print("-"*36)
+        for publisher in publisher_list:
+            print(f"| {publisher[0]:<5} | {publisher[1]}")
+        print("-"*36)
+
+        # Page switching
         if page == 1:
             while True:
                 next = input("Type NEXT for next page, END to retrun to menu: ")
@@ -214,4 +285,5 @@ if __name__ == "__main__":
         read_one(read)
         show_genres()
         show_developers()
+        show_publishers()
         break
