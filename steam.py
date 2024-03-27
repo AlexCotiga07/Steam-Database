@@ -1,4 +1,5 @@
 import sqlite3
+import math
 
 DATABASE_FILE = "steam.db"
 
@@ -152,10 +153,10 @@ def show_developers():
     developers = cursor.fetchall()
 
     page = 1  # Because there's a lot of devs
+    max_pages = math.ceil((len(developers))/50)
     continuing = True
-    while continuing == True:
+    while continuing is True:
         amounts_min = (page-1)*50
-        amounts_max = page*50
         dev_list = []
         for i in range(50):
             dev_list.append(developers[amounts_min])
@@ -167,16 +168,42 @@ def show_developers():
         for dev in dev_list:
             print(f"| {dev[0]:<5} | {dev[1]}")
         print("-"*36)
-        while True:
-            next = input("Type NEXT for next page, END to retrun to menu: ")
-            if next == "NEXT":
-                page = page + 1
-                break
-            elif next == "END":
-                continuing = False
-                break
-            else:
-                print("Invalid command, try again.")
+        if page == 1:
+            while True:
+                next = input("Type NEXT for next page, END to retrun to menu: ")
+                if next == "NEXT":
+                    page = page + 1
+                    break
+                elif next == "END":
+                    continuing = False
+                    break
+                else:
+                    print("Invalid command, try again.")
+        elif page == max_pages:
+            while True:
+                next = input("Type BACK for previous page, END to retrun to menu: ")
+                if next == "BACK":
+                    page = page - 1
+                    break
+                elif next == "END":
+                    continuing = False
+                    break
+                else:
+                    print("Invalid command, try again.")
+        else:
+            while True:
+                next = input("Type NEXT for next page, BACK for previous page, END to retrun to menu: ")
+                if next == "NEXT":
+                    page = page + 1
+                    break
+                elif next == "BACK":
+                    page = page - 1
+                    break
+                elif next == "END":
+                    continuing = False
+                    break
+                else:
+                    print("Invalid command, try again.")
 
     conn.close()  # Close connection to save efficiency
 
