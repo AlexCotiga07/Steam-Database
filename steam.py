@@ -248,6 +248,13 @@ def show_in_genre(id):
                     WHERE GameGenre.genreid = ? \
                     ORDER BY Game.name;", (id,))
     games = cursor.fetchall()
+    cursor.execute("SELECT name \
+                    FROM Genre \
+                    WHERE id = ?", (id,))
+    genre = cursor.fetchone()
+
+    print()
+    print(f"Games in {genre[0]}")
 
     # Print list of games in a block as pages
     display_pages("Game", games)
@@ -267,6 +274,39 @@ def show_in_dev(id):
                     WHERE GameDeveloper.devid = ? \
                     ORDER BY Game.name;", (id,))
     games = cursor.fetchall()
+    cursor.execute("SELECT name \
+                    FROM Developer \
+                    WHERE id = ?", (id,))
+    developer = cursor.fetchone()
+
+    print()
+    print(f"Games by {developer[0]}")
+
+    # Print list of games in a block as pages
+    display_pages("Game", games)
+
+    conn.close()  # Close connection to save efficiency
+
+
+def show_in_publisher(id):
+    """Show list of games by one publisher"""
+    # Connect to database
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT Game.id, \
+                           Game.name \
+                    FROM Game \
+                    JOIN GamePublisher ON GamePublisher.gameid = Game.id \
+                    WHERE GamePublisher.publishid = ? \
+                    ORDER BY Game.name;", (id,))
+    games = cursor.fetchall()
+    cursor.execute("SELECT name \
+                    FROM Publisher \
+                    WHERE id = ?", (id,))
+    publisher = cursor.fetchone()
+
+    print()
+    print(f"Games by {publisher[0]}")
 
     # Print list of games in a block as pages
     display_pages("Game", games)
@@ -281,8 +321,10 @@ if __name__ == "__main__":
         # show_genres()
         # show_developers()
         # show_publishers()
-        # genre_id = int(input("Id of genre: "))
-        # show_in_genre(genre_id)
+        genre_id = int(input("Id of genre: "))
+        show_in_genre(genre_id)
         dev_id = int(input("Id of developer: "))
         show_in_dev(dev_id)
+        publisher_id = int(input("Id of publisher: "))
+        show_in_publisher(publisher_id)
         break
