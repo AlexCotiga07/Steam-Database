@@ -4,8 +4,7 @@ import math
 DATABASE_FILE = "steam.db"
 ITEMS_PER_PAGE = 40
 
-# type = Developers
-# data = taken list
+
 def display_pages(type, data):
     """Display large amounts of data as pages and switch between"""
     page = 1  # Because there's a lot of data
@@ -16,13 +15,16 @@ def display_pages(type, data):
         my_list = []
         for i in range(ITEMS_PER_PAGE):  # Just look at these of an amount
             my_list.append(data[amounts_min])
-            amounts_min = amounts_min + 1
+            if data[-1] == data[amounts_min]:
+                break
+            else:
+                amounts_min = amounts_min + 1
         # Print the data in a block
         print("-"*36)
-        print(f"| {'ID':<5} | {type}")
+        print(f"| {'ID':<7} | {type}")
         print("-"*36)
         for item in my_list:
-            print(f"| {item[0]:<5} | {item[1]}")
+            print(f"| {item[0]:<7} | {item[1]}")
         print("-"*36)
 
         # Page switching
@@ -243,9 +245,31 @@ def show_in_genre(id):
                            Game.name \
                     FROM Game \
                     JOIN GameGenre ON GameGenre.gameid = Game.id \
-                    WHERE GameGenre.genreid = ?;", (id,))
-    # Print list of games in a block as pages ---------------------------------------
-    print("-")
+                    WHERE GameGenre.genreid = ? \
+                    ORDER BY Game.name;", (id,))
+    games = cursor.fetchall()
+
+    # Print list of games in a block as pages
+    display_pages("Game", games)
+
+    conn.close()  # Close connection to save efficiency
+
+
+def show_in_dev(id):
+    """Show list of games by one developer"""
+    # Connect to database
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT Game.id, \
+                           Game.name \
+                    FROM Game \
+                    JOIN GameDeveloper ON GameDeveloper.gameid = Game.id \
+                    WHERE GameDeveloper.devid = ? \
+                    ORDER BY Game.name;", (id,))
+    games = cursor.fetchall()
+
+    # Print list of games in a block as pages
+    display_pages("Game", games)
 
     conn.close()  # Close connection to save efficiency
 
@@ -256,7 +280,9 @@ if __name__ == "__main__":
         # read_one(read)
         # show_genres()
         # show_developers()
-        show_publishers()
+        # show_publishers()
         # genre_id = int(input("Id of genre: "))
         # show_in_genre(genre_id)
+        dev_id = int(input("Id of developer: "))
+        show_in_dev(dev_id)
         break
