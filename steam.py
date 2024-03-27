@@ -350,6 +350,24 @@ def search_dev_by_name():
     conn.close()  # Close connection to save efficiency
 
 
+def search_publisher_by_name():
+    """Search publisher by name rather than id, shows list of all possibilities"""
+    # Connect to database
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    search = input("Search publishers by name: ")
+    search = f"%{search}%"
+    cursor.execute("SELECT id, \
+                           name \
+                    FROM Publisher \
+                    WHERE name LIKE ?;", (search,))
+    publishers = cursor.fetchall()
+
+    display_pages("Publisher", publishers)
+
+    conn.close()  # Close connection to save efficiency
+
+
 if __name__ == "__main__":
     while True:
         # read = input("Id of game: ")
@@ -364,5 +382,6 @@ if __name__ == "__main__":
         # publisher_id = int(input("Id of publisher: "))
         # show_in_publisher(publisher_id)
         # search_game_by_name()
-        search_dev_by_name()
+        # search_dev_by_name()
+        search_publisher_by_name()
         break
