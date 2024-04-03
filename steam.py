@@ -386,8 +386,13 @@ def add_dev():
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
     dev_name = input("Name of developer: ")
-    cursor.execute("INSERT INTO Developer (name) VALUES (?);", (dev_name,))
-    conn.commit()
+    cursor.execute("SELECT id FROM Developer WHERE name = ?;", (dev_name,))
+    test = cursor.fetchone()
+    if len(test) > 0:
+        print(f"That developer already exists, id {test[0]}")
+    else:
+        cursor.execute("INSERT INTO Developer (name) VALUES (?);", (dev_name,))
+        conn.commit()
     conn.close()  # Close connection to save efficiency
 
 
@@ -405,7 +410,7 @@ if __name__ == "__main__":
         # publisher_id = int(input("Id of publisher: "))
         # show_in_publisher(publisher_id)
         # search_game_by_name()
-        search_dev_by_name()
+        # search_dev_by_name()
         # search_publisher_by_name()
-        # add_dev()
+        add_dev()
         break
