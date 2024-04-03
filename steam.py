@@ -320,7 +320,7 @@ def search_game_by_name():
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
     search = input("Search games by name: ")
-    search = f"%{search}%"
+    search = f"%{search}%"  # format so it searches correctly
     cursor.execute("SELECT id, \
                            name \
                     FROM Game \
@@ -342,7 +342,7 @@ def search_dev_by_name():
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
     search = input("Search developers by name: ")
-    search = f"%{search}%"
+    search = f"%{search}%"  # format so it searches correctly
     cursor.execute("SELECT id, \
                            name \
                     FROM Developer \
@@ -364,7 +364,7 @@ def search_publisher_by_name():
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
     search = input("Search publishers by name: ")
-    search = f"%{search}%"
+    search = f"%{search}%"  # format so it searches correctly
     cursor.execute("SELECT id, \
                            name \
                     FROM Publisher \
@@ -377,6 +377,17 @@ def search_publisher_by_name():
     else:
         print("No results")
 
+    conn.close()  # Close connection to save efficiency
+
+
+def add_dev():
+    """Add a new developer to the database"""
+    # Connect to database
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    dev_name = input("Name of developer: ")
+    cursor.execute("INSERT INTO Developer (name) VALUES (?);", (dev_name,))
+    conn.commit()
     conn.close()  # Close connection to save efficiency
 
 
@@ -394,6 +405,7 @@ if __name__ == "__main__":
         # publisher_id = int(input("Id of publisher: "))
         # show_in_publisher(publisher_id)
         # search_game_by_name()
-        # search_dev_by_name()
-        search_publisher_by_name()
+        search_dev_by_name()
+        # search_publisher_by_name()
+        # add_dev()
         break
