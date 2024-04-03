@@ -73,6 +73,7 @@ def read_one(id):
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
+
     # Collect data from game table
     cursor.execute("SELECT name, \
                            releasedate, \
@@ -190,6 +191,7 @@ def show_genres():
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
+
     cursor.execute("SELECT * \
                     FROM Genre \
                     ORDER BY name;")
@@ -211,6 +213,7 @@ def show_developers():
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
+
     cursor.execute("SELECT * \
                     FROM Developer \
                     ORDER BY name;")
@@ -226,6 +229,7 @@ def show_publishers():
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
+
     cursor.execute("SELECT * \
                     FROM Publisher \
                     ORDER BY name;")
@@ -241,6 +245,7 @@ def show_in_genre(id):
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
+
     cursor.execute("SELECT Game.id, \
                            Game.name \
                     FROM Game \
@@ -267,6 +272,7 @@ def show_in_dev(id):
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
+
     cursor.execute("SELECT Game.id, \
                            Game.name \
                     FROM Game \
@@ -293,6 +299,7 @@ def show_in_publisher(id):
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
+
     cursor.execute("SELECT Game.id, \
                            Game.name \
                     FROM Game \
@@ -319,6 +326,7 @@ def search_game_by_name():
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
+
     search = input("Search games by name: ")
     search = f"%{search}%"  # format so it searches correctly
     cursor.execute("SELECT id, \
@@ -341,6 +349,7 @@ def search_dev_by_name():
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
+
     search = input("Search developers by name: ")
     search = f"%{search}%"  # format so it searches correctly
     cursor.execute("SELECT id, \
@@ -363,6 +372,7 @@ def search_publisher_by_name():
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
+
     search = input("Search publishers by name: ")
     search = f"%{search}%"  # format so it searches correctly
     cursor.execute("SELECT id, \
@@ -385,14 +395,16 @@ def add_dev():
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
-    dev_name = input("Name of developer: ")
-    cursor.execute("SELECT id FROM Developer WHERE name = ?;", (dev_name,))
-    test = cursor.fetchone()
-    if not test:
-        cursor.execute("INSERT INTO Developer (name) VALUES (?);", (dev_name,))
-        conn.commit()
-    else:
-        print(f"That developer already exists, id {test[0]}")
+
+    dev_name = input("Name of developer (Type / to cancel): ")
+    if dev_name != "/":
+        cursor.execute("SELECT id FROM Developer WHERE name = ?;", (dev_name,))
+        test = cursor.fetchone()
+        if not test:
+            cursor.execute("INSERT INTO Developer (name) VALUES (?);", (dev_name,))
+            conn.commit()
+        else:
+            print(f"That developer already exists, id {test[0]}")
     conn.close()  # Close connection to save efficiency
 
 
@@ -401,14 +413,16 @@ def add_publisher():
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
-    publisher_name = input("Name of publisher: ")
-    cursor.execute("SELECT id FROM Publisher WHERE name = ?;", (publisher_name,))
-    test = cursor.fetchone()
-    if not test:
-        cursor.execute("INSERT INTO Publisher (name) VALUES (?);", (publisher_name,))
-        conn.commit()
-    else:
-        print(f"That publisher already exists, id {test[0]}")
+
+    publisher_name = input("Name of publisher (Type / to cancel): ")
+    if publisher_name != "/":
+        cursor.execute("SELECT id FROM Publisher WHERE name = ?;", (publisher_name,))
+        test = cursor.fetchone()
+        if not test:
+            cursor.execute("INSERT INTO Publisher (name) VALUES (?);", (publisher_name,))
+            conn.commit()
+        else:
+            print(f"That publisher already exists, id {test[0]}")
     conn.close()  # Close connection to save efficiency
 
 
@@ -417,14 +431,38 @@ def add_genre():
     # Connect to database
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
-    genre_name = input("Name of genre: ")
-    cursor.execute("SELECT id FROM Genre WHERE name = ?;", (genre_name,))
-    test = cursor.fetchone()
-    if not test:
-        cursor.execute("INSERT INTO Genre (name) VALUES (?);", (genre_name,))
-        conn.commit()
-    else:
-        print(f"That genre already exists, id {test[0]}")
+
+    genre_name = input("Name of genre (Type / to cancel): ")
+    if genre_name != "/":
+        cursor.execute("SELECT id FROM Genre WHERE name = ?;", (genre_name,))
+        test = cursor.fetchone()
+        if not test:
+            cursor.execute("INSERT INTO Genre (name) VALUES (?);", (genre_name,))
+            conn.commit()
+        else:
+            print(f"That genre already exists, id {test[0]}")
+    conn.close()  # Close connection to save efficiency
+
+
+def add_game():
+    """Add new game to database and add to bridging tables"""
+    # Connect to database
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+
+    print("Make sure you know the ID of the genres, publishers and developers before starting.")
+    game_name = input("Name of game (Type / at any time to cancel): ")
+    if game_name != "/":
+        # Test if game aready exists
+        cursor.execute("SELECT id FROM Game WHERE name = ?;", (game_name,))
+        test = cursor.fetchone()
+        if not test:  # Doesn't exist, continue
+            release = input("Release date (yyyy-mm-dd): ")
+            if release != "/":
+                # ---------------------------------------------------------
+        else:
+            print(f"That game already exists, id {test[0]}")
+
     conn.close()  # Close connection to save efficiency
 
 
@@ -446,5 +484,5 @@ if __name__ == "__main__":
         # search_publisher_by_name()
         # add_dev()
         # add_publisher()
-        add_genre()
+        # add_genre()
         break
