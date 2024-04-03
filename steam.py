@@ -324,10 +324,14 @@ def search_game_by_name():
     cursor.execute("SELECT id, \
                            name \
                     FROM Game \
-                    WHERE name LIKE ?;", (search,))
+                    WHERE name LIKE ? \
+                    ORDER BY name;", (search,))
     games = cursor.fetchall()
 
-    display_pages("Game", games)
+    if len(games) > 0:
+        display_pages("Game", games)
+    else:
+        print("No results")
 
     conn.close()  # Close connection to save efficiency
 
@@ -342,10 +346,14 @@ def search_dev_by_name():
     cursor.execute("SELECT id, \
                            name \
                     FROM Developer \
-                    WHERE name LIKE ?;", (search,))
+                    WHERE name LIKE ? \
+                    ORDER BY name;", (search,))
     devs = cursor.fetchall()
 
-    display_pages("Developer", devs)
+    if len(devs) > 0:
+        display_pages("Developer", devs)
+    else:
+        print("No results")
 
     conn.close()  # Close connection to save efficiency
 
@@ -360,10 +368,14 @@ def search_publisher_by_name():
     cursor.execute("SELECT id, \
                            name \
                     FROM Publisher \
-                    WHERE name LIKE ?;", (search,))
+                    WHERE name LIKE ? \
+                    ORDER BY name;", (search,))
     publishers = cursor.fetchall()
 
-    display_pages("Publisher", publishers)
+    if len(publishers) > 0:
+        display_pages("Publisher", publishers)
+    else:
+        print("No results")
 
     conn.close()  # Close connection to save efficiency
 
