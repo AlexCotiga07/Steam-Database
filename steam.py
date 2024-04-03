@@ -412,6 +412,22 @@ def add_publisher():
     conn.close()  # Close connection to save efficiency
 
 
+def add_genre():
+    """Add a new genre to the database"""
+    # Connect to database
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    genre_name = input("Name of genre: ")
+    cursor.execute("SELECT id FROM Genre WHERE name = ?;", (genre_name,))
+    test = cursor.fetchone()
+    if not test:
+        cursor.execute("INSERT INTO Genre (name) VALUES (?);", (genre_name,))
+        conn.commit()
+    else:
+        print(f"That genre already exists, id {test[0]}")
+    conn.close()  # Close connection to save efficiency
+
+
 if __name__ == "__main__":
     while True:
         # read = input("Id of game: ")
@@ -429,5 +445,6 @@ if __name__ == "__main__":
         # search_dev_by_name()
         # search_publisher_by_name()
         # add_dev()
-        add_publisher()
+        # add_publisher()
+        add_genre()
         break
