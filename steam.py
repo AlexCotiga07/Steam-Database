@@ -452,14 +452,67 @@ def add_game():
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     game_name = input("Name of game (Type / at any time to cancel): ")
-    if game_name != "/":
+    if game_name != "/":  # cancel
         # Test if game aready exists
         cursor.execute("SELECT id FROM Game WHERE name = ?;", (game_name,))
         test = cursor.fetchone()
         if not test:  # Doesn't exist, continue
-            release = input("Release date (yyyy-mm-dd): ")
-            if release != "/":
-                # ---------------------------------------------------------
+            # release date
+            while True:  # until proper formatting
+                try:  # Not a number
+                    release_year = int(input("Release year: "))
+                    if release_year != "/":  # cancel
+                        if len(str(release_year)) != 4 or release_year < 1:
+                            print("That is not a valid year, the year should have 4 digits.")
+                        else:
+                            release_year = str(release_year)
+                            break
+                except ValueError:
+                    print("That is not a year")
+            if release_year != "/":  # Still need this but outside the while
+                # release month
+                while True:  # until proper formatting
+                    try:  # not a number
+                        release_month = int(input("Release month (number not name): "))
+                        if release_month != "/":  # cancel
+                            if len(str(release_month)) > 2 or release_month > 12 or release_month < 1:
+                                print("That is not a valid month")
+                            elif len(str(release_month)) == 1:
+                                release_month = f"0{release_month}"
+                                break
+                            else:
+                                release_month = str(release_month)
+                    except ValueError:
+                        print("That is not a month in the form of a number")
+                if release_month != "/":  # still need but outside the while
+                    # release day
+                    while True:  # until proper formatting
+                        try:  # not a number
+                            release_day = int(input("Release day: "))
+                            if release_day != "/":  # cancel
+                                if release_day < 1:
+                                    print("That is not a valid date")
+                                elif len(str(release_day)) > 2:
+                                    print("That is not a valid date")
+                                elif release_day > 31:
+                                    print("That is not a valid date")
+                                else:
+                                    if len(str(release_day)) == 1:
+                                        release_day = f"0{release_day}"
+                                        break
+                                    elif release_day > 28 and release_month == "02":  # february
+                                        print("That is not a valid date")
+                                    elif release_day == 31:
+                                        if release_month == "04" or release_month == "06" or release_month == "09" or release_month == "11":
+                                            print("That is not a valid date")
+                                        else:
+                                            release_day = str(release_day)
+                                            break
+                                    else:
+                                        release_day = str(release_day)
+                                        break
+                        except ValueError:
+                            print("That is not a valid date")
         else:
             print(f"That game already exists, id {test[0]}")
 
@@ -485,4 +538,5 @@ if __name__ == "__main__":
         # add_dev()
         # add_publisher()
         # add_genre()
+        add_game()
         break
