@@ -462,7 +462,8 @@ def add_game():
                  ask_devs_add_game,
                  ask_publishers_add_game,
                  ask_genres_add_game,
-                 ask_windows_compatablity]
+                 ask_windows_compatablity,
+                 ask_mac_compatability]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
@@ -484,20 +485,7 @@ def add_game():
             month = goal
         
 
-        #                         # windows compat
-        #                         while True:
-        #                             windows_ask = input("Is the game compatable with Windows? Y or N: ")
-        #                             if windows_ask == "/":
-        #                                 break
-        #                             elif windows_ask == "Y":
-        #                                 windows = 1
-        #                                 break
-        #                             elif windows_ask == "N":
-        #                                 windows = 0
-        #                                 break
-        #                             else:
-        #                                 print("Not a valid answer")
-        #                         if windows_ask != "/":  # didn't cancel
+
         #                             # mac compat
         #                             while True:
         #                                 mac_ask = input("Is the game compatable with Mac? Y or N: ")
@@ -750,6 +738,25 @@ def ask_windows_compatablity():
         else:
             print("Not a valid answer")
     return windows, cont
+
+
+def ask_mac_compatability():
+    """ask compatability with mac for add game"""
+    cont = True
+    while True:
+        mac_ask = input("Is the game compatable with Mac? Y or N: ")
+        if mac_ask == "/":
+            cont = False
+            break
+        elif mac_ask == "Y":
+            mac = 1
+            break
+        elif mac_ask == "N":
+            mac = 0
+            break
+        else:
+            print("Not a valid answer")
+    return mac, cont
 
 
 if __name__ == "__main__":
