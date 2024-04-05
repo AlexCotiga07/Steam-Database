@@ -514,10 +514,10 @@ def add_game():
                                         break
                                     elif release_day > 28 and release_month == "02":  # february
                                         print("That is not a valid date")
-                                    elif release_day > 31:
+                                    elif release_day > 31:  # short months
                                         if release_month == "04" or release_month == "06" or release_month == "09" or release_month == "11":
                                             print("That is not a valid date")
-                                        else:
+                                        else:  # long months
                                             release_day = str(release_day)
                                             break
                                     else:
@@ -527,7 +527,7 @@ def add_game():
                                 break
                         except ValueError:
                             print("That is not a valid date")
-                    if release_day != "/":  # still need but outside the while
+                    if release_day != "/":  # didn't cancel
                         # developers
                         print("Type DONE when all devs are added")
                         while True:
@@ -547,7 +547,7 @@ def add_game():
                                         developers.append(this_dev)
                             except ValueError:
                                 print("That is not a valid id")
-                        if this_dev != "/":
+                        if this_dev != "/":  # didn't cancel
                             # publishers
                             print("Type DONE when all publishers are added")
                             while True:
@@ -567,6 +567,26 @@ def add_game():
                                             publishers.append(this_publisher)
                                 except ValueError:
                                     print("That is not a valid id")
+                            if this_publisher != "/":  # didn't cancel
+                                # genres
+                                print("Type DONE when all genres are added")
+                                while True:
+                                    try:
+                                        this_genre = input("ID of genre: ")
+                                        if this_genre == "DONE" or this_genre == "/":
+                                            break
+                                        elif len(this_genre) > 6:
+                                            print("That ID doesn't exist")
+                                        else:
+                                            this_genre = int(this_genre)
+                                            cursor.execute("SELECT name FROM Genre WHERE id = ?;", (this_genre,))
+                                            test = cursor.fetchone()
+                                            if not test:  # No genre found
+                                                print("That ID doesn't exist")
+                                            else:
+                                                genres.append(this_genre)
+                                    except ValueError:
+                                        print("That is not a valid id")
         else:
             print(f"That game already exists, id {test[0]}")
 
