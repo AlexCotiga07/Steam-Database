@@ -451,9 +451,7 @@ def add_game():
     cursor = conn.cursor()
 
     # Lists
-    developers = []
-    publishers = []
-    genres = []
+    game_table_stuff = []
 
     functions = [ask_name_for_add_game,
                  ask_release_year_add_game,
@@ -463,7 +461,8 @@ def add_game():
                  ask_publishers_add_game,
                  ask_genres_add_game,
                  ask_windows_compatablity,
-                 ask_mac_compatability]
+                 ask_mac_compatability,
+                 ask_linux_compatability]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
@@ -477,44 +476,12 @@ def add_game():
             genres, cont = ask_genres_add_game()
         else:
             goal, cont = func()
-
+            game_table_stuff.append(goal)
         # Check if continuing
         if cont is False:
             break
         elif func == ask_release_month_add_game:  # to save month
             month = goal
-        
-
-
-        #                             # mac compat
-        #                             while True:
-        #                                 mac_ask = input("Is the game compatable with Mac? Y or N: ")
-        #                                 if mac_ask == "/":
-        #                                     break
-        #                                 elif mac_ask == "Y":
-        #                                     mac = 1
-        #                                     break
-        #                                 elif mac_ask == "N":
-        #                                     mac = 0
-        #                                     break
-        #                                 else:
-        #                                     print("Not a valid answer")
-        #                             if mac_ask != "/":
-        #                                 # linux compat
-        #                                 while True:
-        #                                     linux_ask = input("Is the game compatable with Linux? Y or N: ")
-        #                                     if linux_ask == "/":
-        #                                         break
-        #                                     elif linux_ask == "Y":
-        #                                         linux = 1
-        #                                         break
-        #                                     elif linux_ask == "N":
-        #                                         linux = 0
-        #                                         break
-        #                                     else:
-        #                                         print("Not a valid answer")
-        # else:
-        #     print(f"That game already exists, id {test[0]}")
 
     conn.close()  # Close connection to save efficiency
 
@@ -757,6 +724,25 @@ def ask_mac_compatability():
         else:
             print("Not a valid answer")
     return mac, cont
+
+
+def ask_linux_compatability():
+    """ask compatability with linux for add game"""
+    cont = True
+    while True:
+        linux_ask = input("Is the game compatable with Linux? Y or N: ")
+        if linux_ask == "/":
+            cont = False
+            break
+        elif linux_ask == "Y":
+            linux = 1
+            break
+        elif linux_ask == "N":
+            linux = 0
+            break
+        else:
+            print("Not a valid answer")
+    return linux, cont
 
 
 if __name__ == "__main__":
