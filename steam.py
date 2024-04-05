@@ -464,7 +464,9 @@ def add_game():
                  ask_mac_compatability,
                  ask_linux_compatability,
                  ask_min_age,
-                 ask_achievements]
+                 ask_achievements,
+                 ask_pos_reviews,
+                 ask_neg_reviews]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
@@ -788,6 +790,50 @@ def ask_achievements():
         except ValueError:
             print("Not a valid number")
     return achievements, cont
+
+
+def ask_pos_reviews():
+    """ask for positive reviews for adding to game"""
+    cont = True
+    while True:
+        try:
+            reviews = input("Amount of positive reviews: ")
+            if reviews == "/":
+                cont = False
+                break
+            elif len(reviews) > 9:
+                print("Not a valid number")
+            else:
+                reviews = int(reviews)
+                if reviews < 0:
+                    print("Not a valid number")
+                else:
+                    break
+        except ValueError:
+            print("Not a valid number")
+    return reviews, cont
+
+
+def ask_neg_reviews():
+    """ask for negative reviews for adding to game"""
+    cont = True
+    while True:
+        try:
+            reviews = input("Amount of negative reviews: ")
+            if reviews == "/":
+                cont = False
+                break
+            elif len(reviews) > 9:
+                print("Not a valid number")
+            else:
+                reviews = int(reviews)
+                if reviews < 0:
+                    print("Not a valid number")
+                else:
+                    break
+        except ValueError:
+            print("Not a valid number")
+    return reviews, cont
 
 
 if __name__ == "__main__":
