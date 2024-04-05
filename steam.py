@@ -450,6 +450,9 @@ def add_game():
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
 
+    # Lists
+    developers = []
+
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     game_name = input("Name of game (Type / at any time to cancel): ")
     if game_name != "/":  # cancel
@@ -502,7 +505,7 @@ def add_game():
                                         break
                                     elif release_day > 28 and release_month == "02":  # february
                                         print("That is not a valid date")
-                                    elif release_day == 31:
+                                    elif release_day > 31:
                                         if release_month == "04" or release_month == "06" or release_month == "09" or release_month == "11":
                                             print("That is not a valid date")
                                         else:
@@ -513,6 +516,27 @@ def add_game():
                                         break
                         except ValueError:
                             print("That is not a valid date")
+                    if release_day != "/":  # still need but outside the while
+                        # developers
+                        print("Type DONE when all devs are added")
+                        while True:
+                            try:
+                                this_dev = input("ID of developer: ")
+                                if this_dev == "DONE" or this_dev == "/":
+                                    break
+                                elif len(this_dev) > 6:
+                                    print("That ID doesn't exist")
+                                else:
+                                    this_dev = int(this_dev)
+                                    cursor.execute("SELECT name FROM Developer WHERE id = ?;", (this_dev,))
+                                    test = cursor.fetchone()
+                                    if not test:  # No dev found
+                                        print("That ID doesn't exist")
+                                    else:
+                                        developers.append(this_dev)
+                            except ValueError:
+                                print("That is not a valid id")
+                        # if this_dev != "/":
         else:
             print(f"That game already exists, id {test[0]}")
 
