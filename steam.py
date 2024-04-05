@@ -455,7 +455,7 @@ def add_game():
     publishers = []
     genres = []
 
-    functions = [ask_name_for_add_game, ask_release_year_add_game, ask_release_month_add_game, ask_release_day_add_game, ask_devs_add_game, ask_publishers_add_game]
+    functions = [ask_name_for_add_game, ask_release_year_add_game, ask_release_month_add_game, ask_release_day_add_game, ask_devs_add_game, ask_publishers_add_game, ask_genres_add_game]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
@@ -465,6 +465,8 @@ def add_game():
             developers, cont = ask_devs_add_game()
         elif func == ask_publishers_add_game:  # Publishers in seperate list
             publishers, cont = ask_publishers_add_game()
+        elif func == ask_genres_add_game:  # Genres in seperate list
+            genres, cont = ask_genres_add_game()
         else:
             goal, cont = func()
 
@@ -475,26 +477,6 @@ def add_game():
             month = goal
         
 
-        #                 # publishers
-        #                 print("Type DONE when all publishers are added")
-        #                 while True:
-        #                     try:
-        #                         this_publisher = input("ID of publisher: ")
-        #                         if this_publisher == "DONE" or this_publisher == "/":
-        #                             break
-        #                         elif len(this_publisher) > 6:
-        #                             print("That ID doesn't exist")
-        #                         else:
-        #                             this_publisher = int(this_publisher)
-        #                             cursor.execute("SELECT name FROM Publisher WHERE id = ?;", (this_publisher,))
-        #                             test = cursor.fetchone()
-        #                             if not test:  # No publisher found
-        #                                 print("That ID doesn't exist")
-        #                             else:
-        #                                 publishers.append(this_publisher)
-        #                     except ValueError:
-        #                         print("That is not a valid id")
-        #                 if this_publisher != "/":  # didn't cancel
         #                     # genres
         #                     print("Type DONE when all genres are added")
         #                     while True:
@@ -711,7 +693,6 @@ def ask_publishers_add_game():
             elif this_publisher == "DONE" and not publishers:
                 print("You must add at least one publisher.")
                 print("If the intended publisher doesn't exist in the database, cancel and add it.")
-                break
             elif this_publisher == "/":
                 cont = False
                 break
@@ -729,6 +710,40 @@ def ask_publishers_add_game():
             print("That is not a valid id")
     conn.close()
     return publishers, cont
+
+
+def ask_genres_add_game():
+    """ask genres for add game"""
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cont = True
+    genres = []
+    print("Type DONE when all genres are added")
+    while True:
+        try:
+            this_genre = input("ID of genre: ")
+            if this_genre == "DONE" and genres:
+                break
+            elif this_genre == "DONE" and not genres:
+                print("You must add at least one genre.")
+                print("If the intended genre doesn't exist in the database, cancel and add it.")
+            elif this_genre == "/":
+                cont = False
+                break
+            elif len(this_genre) > 6:
+                print("That ID doesn't exist")
+            else:
+                this_genre = int(this_genre)
+                cursor.execute("SELECT name FROM Genre WHERE id = ?;", (this_genre,))
+                test = cursor.fetchone()
+                if not test:  # No genre found
+                    print("That ID doesn't exist")
+                else:
+                    genres.append(this_genre)
+        except ValueError:
+            print("That is not a valid id")
+    conn.close()
+    return genres, cont
 
 
 if __name__ == "__main__":
