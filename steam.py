@@ -455,33 +455,24 @@ def add_game():
     publishers = []
     genres = []
 
-    functions = [ask_name_for_add_game, ask_release_year_add_game, ask_release_month_add_game]
+    functions = [ask_name_for_add_game, ask_release_year_add_game, ask_release_month_add_game, ask_release_day_add_game]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
-        goal, cont = func()
+        if func == ask_release_day_add_game:
+            goal, cont = ask_release_day_add_game(month)
+        else:
+            goal, cont = func()
+
+        # Check if continuing
         if cont is False:
             break
+        elif func == ask_release_month_add_game:  # to save month
+            month = goal
+        
+
     
     
-            # release month
-        #     while True:  # until proper formatting
-        #         try:  # not a number
-        #             release_month = input("Release month (number not name): ")
-        #             if release_month != "/":  # cancel
-        #                 release_month = int(release_month)
-        #                 if len(str(release_month)) > 2 or release_month > 12 or release_month < 1:
-        #                     print("That is not a valid month")
-        #                 elif len(str(release_month)) == 1:
-        #                     release_month = f"0{release_month}"
-        #                     break
-        #                 else:
-        #                     release_month = str(release_month)
-        #             else:
-        #                 break
-        #         except ValueError:
-        #             print("That is not a month in the form of a number")
-        #     if release_month != "/":  # still need but outside the while
         #         # release day
         #         while True:  # until proper formatting
         #             try:  # not a number
@@ -682,6 +673,43 @@ def ask_release_month_add_game():
         except ValueError:
             print("That is not a month in the form of a number")
     return release_month, cont
+
+
+def ask_release_day_add_game(month):
+    """ask games's release day to add into game"""
+    cont = True
+    while True:  # until proper formatting
+        try:  # not a number
+            release_day = input("Release day: ")
+            if release_day != "/":  # cancel
+                release_day = int(release_day)
+                if release_day < 1:
+                    print("That is not a valid date")
+                elif len(str(release_day)) > 2:
+                    print("That is not a valid date")
+                elif release_day > 31:
+                    print("That is not a valid date")
+                else:
+                    if len(str(release_day)) == 1:
+                        release_day = f"0{release_day}"
+                        break
+                    elif release_day > 28 and month == "02":  # february
+                        print("That is not a valid date")
+                    elif release_day > 31:  # short months
+                        if month == "04" or month == "06" or month == "09" or month == "11":
+                            print("That is not a valid date")
+                        else:  # long months
+                            release_day = str(release_day)
+                            break
+                    else:
+                        release_day = str(release_day)
+                        break
+            else:
+                cont = False
+                break
+        except ValueError:
+            print("That is not a valid date")
+    return release_day, cont
 
 
 if __name__ == "__main__":
