@@ -462,7 +462,8 @@ def add_game():
                  ask_genres_add_game,
                  ask_windows_compatablity,
                  ask_mac_compatability,
-                 ask_linux_compatability]
+                 ask_linux_compatability,
+                 ask_min_age]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
@@ -743,6 +744,26 @@ def ask_linux_compatability():
         else:
             print("Not a valid answer")
     return linux, cont
+
+
+def ask_min_age():
+    """ask for minimum age for adding to game"""
+    cont = True
+    while True:
+        try:
+            age = input("Minimum age to play (0 if no restriction): ")
+            if age == "/":
+                cont = False
+                break
+            else:
+                age = int(age)
+                if age < 0 or age == -0:
+                    print("Not a valid age")
+                else:
+                    break
+        except ValueError:
+            print("Not a valid age")
+    return age, cont
 
 
 if __name__ == "__main__":
