@@ -587,6 +587,48 @@ def add_game():
                                                 genres.append(this_genre)
                                     except ValueError:
                                         print("That is not a valid id")
+                                if this_genre != "/":  # didn't cancel
+                                    # windows compat
+                                    while True:
+                                        windows_ask = input("Is the game compatable with Windows? Y or N: ")
+                                        if windows_ask == "/":
+                                            break
+                                        elif windows_ask == "Y":
+                                            windows = 1
+                                            break
+                                        elif windows_ask == "N":
+                                            windows = 0
+                                            break
+                                        else:
+                                            print("Not a valid answer")
+                                    if windows_ask != "/":  # didn't cancel
+                                        # mac compat
+                                        while True:
+                                            mac_ask = input("Is the game compatable with Mac? Y or N: ")
+                                            if mac_ask == "/":
+                                                break
+                                            elif mac_ask == "Y":
+                                                mac = 1
+                                                break
+                                            elif mac_ask == "N":
+                                                mac = 0
+                                                break
+                                            else:
+                                                print("Not a valid answer")
+                                        if mac_ask != "/":
+                                            # linux compat
+                                            while True:
+                                                linux_ask = input("Is the game compatable with Linux? Y or N: ")
+                                                if linux_ask == "/":
+                                                    break
+                                                elif linux_ask == "Y":
+                                                    linux = 1
+                                                    break
+                                                elif linux_ask == "N":
+                                                    linux = 0
+                                                    break
+                                                else:
+                                                    print("Not a valid answer")
         else:
             print(f"That game already exists, id {test[0]}")
 
