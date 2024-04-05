@@ -452,6 +452,8 @@ def add_game():
 
     # Lists
     developers = []
+    publishers = []
+    genres = []
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     game_name = input("Name of game (Type / at any time to cancel): ")
@@ -463,21 +465,25 @@ def add_game():
             # release date
             while True:  # until proper formatting
                 try:  # Not a number
-                    release_year = int(input("Release year: "))
+                    release_year = input("Release year: ")
                     if release_year != "/":  # cancel
+                        release_year = int(release_year)
                         if len(str(release_year)) != 4 or release_year < 1:
                             print("That is not a valid year, the year should have 4 digits.")
                         else:
                             release_year = str(release_year)
                             break
+                    else:
+                        break
                 except ValueError:
                     print("That is not a year")
             if release_year != "/":  # Still need this but outside the while
                 # release month
                 while True:  # until proper formatting
                     try:  # not a number
-                        release_month = int(input("Release month (number not name): "))
+                        release_month = input("Release month (number not name): ")
                         if release_month != "/":  # cancel
+                            release_month = int(release_month)
                             if len(str(release_month)) > 2 or release_month > 12 or release_month < 1:
                                 print("That is not a valid month")
                             elif len(str(release_month)) == 1:
@@ -485,14 +491,17 @@ def add_game():
                                 break
                             else:
                                 release_month = str(release_month)
+                        else:
+                            break
                     except ValueError:
                         print("That is not a month in the form of a number")
                 if release_month != "/":  # still need but outside the while
                     # release day
                     while True:  # until proper formatting
                         try:  # not a number
-                            release_day = int(input("Release day: "))
+                            release_day = input("Release day: ")
                             if release_day != "/":  # cancel
+                                release_day = int(release_day)
                                 if release_day < 1:
                                     print("That is not a valid date")
                                 elif len(str(release_day)) > 2:
@@ -514,6 +523,8 @@ def add_game():
                                     else:
                                         release_day = str(release_day)
                                         break
+                            else:
+                                break
                         except ValueError:
                             print("That is not a valid date")
                     if release_day != "/":  # still need but outside the while
@@ -536,7 +547,26 @@ def add_game():
                                         developers.append(this_dev)
                             except ValueError:
                                 print("That is not a valid id")
-                        # if this_dev != "/":
+                        if this_dev != "/":
+                            # publishers
+                            print("Type DONE when all publishers are added")
+                            while True:
+                                try:
+                                    this_publisher = input("ID of publisher: ")
+                                    if this_publisher == "DONE" or this_publisher == "/":
+                                        break
+                                    elif len(this_publisher) > 6:
+                                        print("That ID doesn't exist")
+                                    else:
+                                        this_publisher = int(this_publisher)
+                                        cursor.execute("SELECT name FROM Publisher WHERE id = ?;", (this_publisher,))
+                                        test = cursor.fetchone()
+                                        if not test:  # No publisher found
+                                            print("That ID doesn't exist")
+                                        else:
+                                            publishers.append(this_publisher)
+                                except ValueError:
+                                    print("That is not a valid id")
         else:
             print(f"That game already exists, id {test[0]}")
 
