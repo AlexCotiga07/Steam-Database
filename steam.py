@@ -468,7 +468,8 @@ def add_game():
                  ask_pos_reviews,
                  ask_neg_reviews,
                  ask_median_playtime,
-                 ask_average_playtime]
+                 ask_average_playtime,
+                 ask_price]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
@@ -880,6 +881,28 @@ def ask_average_playtime():
         except ValueError:
             print("Not a valid number")
     return playtime, cont
+
+
+def ask_price():
+    """ask for price for adding to game"""
+    cont = True
+    while True:
+        try:
+            price = input("Price (NZD): $")
+            if price == "/":
+                cont = False
+                break
+            elif len(price) > 9:
+                print("Not a valid number")
+            else:
+                price = float("%.2f" % (float(price)))
+                if price < 0:
+                    print("Not a valid number")
+                else:
+                    break
+        except ValueError:
+            print("Not a valid number")
+    return price, cont
 
 
 if __name__ == "__main__":
