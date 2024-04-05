@@ -455,32 +455,15 @@ def add_game():
     publishers = []
     genres = []
 
-    functions = [ask_name_for_add_game, ask_release_year_add_game]
+    functions = [ask_name_for_add_game, ask_release_year_add_game, ask_release_month_add_game]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
         goal, cont = func()
         if cont is False:
             break
-    # game_name, cont = ask_name_for_add_game()
-    # if cont is True:
-        # release date
-        # while True:  # until proper formatting
-        #     try:  # Not a number
-        #         release_year = input("Release year: ")
-        #         if release_year != "/":  # cancel
-        #             release_year = int(release_year)
-        #             if len(str(release_year)) != 4 or release_year < 1:
-        #                 print("That is not a valid year, the year should have 4 digits.")
-        #             else:
-        #                 release_year = str(release_year)
-        #                 break
-        #         else:
-        #             break
-        #     except ValueError:
-        #         print("That is not a year")
-        # release_year, cont = ask_release_year_add_game()
-        # if release_year != "/":  # Still need this but outside the while
+    
+    
             # release month
         #     while True:  # until proper formatting
         #         try:  # not a number
@@ -676,6 +659,29 @@ def ask_release_year_add_game():
         except ValueError:
             print("That is not a year")
     return release_year, cont
+
+
+def ask_release_month_add_game():
+    """ask game's month to add into game"""
+    cont = True
+    while True:  # until proper formatting
+        try:  # not a number
+            release_month = input("Release month (number not name): ")
+            if release_month != "/":  # cancel
+                release_month = int(release_month)
+                if len(str(release_month)) > 2 or release_month > 12 or release_month < 1:
+                    print("That is not a valid month")
+                elif len(str(release_month)) == 1:
+                    release_month = f"0{release_month}"
+                    break
+                else:
+                    release_month = str(release_month)
+            else:
+                cont = False
+                break
+        except ValueError:
+            print("That is not a month in the form of a number")
+    return release_month, cont
 
 
 if __name__ == "__main__":
