@@ -455,12 +455,14 @@ def add_game():
     publishers = []
     genres = []
 
-    functions = [ask_name_for_add_game, ask_release_year_add_game, ask_release_month_add_game, ask_release_day_add_game]
+    functions = [ask_name_for_add_game, ask_release_year_add_game, ask_release_month_add_game, ask_release_day_add_game, ask_devs_add_game]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
         if func == ask_release_day_add_game:
             goal, cont = ask_release_day_add_game(month)
+        elif func == ask_devs_add_game:
+            developers, cont = ask_devs_add_game()
         else:
             goal, cont = func()
 
@@ -473,38 +475,6 @@ def add_game():
 
     
     
-        #         # release day
-        #         while True:  # until proper formatting
-        #             try:  # not a number
-        #                 release_day = input("Release day: ")
-        #                 if release_day != "/":  # cancel
-        #                     release_day = int(release_day)
-        #                     if release_day < 1:
-        #                         print("That is not a valid date")
-        #                     elif len(str(release_day)) > 2:
-        #                         print("That is not a valid date")
-        #                     elif release_day > 31:
-        #                         print("That is not a valid date")
-        #                     else:
-        #                         if len(str(release_day)) == 1:
-        #                             release_day = f"0{release_day}"
-        #                             break
-        #                         elif release_day > 28 and release_month == "02":  # february
-        #                             print("That is not a valid date")
-        #                         elif release_day > 31:  # short months
-        #                             if release_month == "04" or release_month == "06" or release_month == "09" or release_month == "11":
-        #                                 print("That is not a valid date")
-        #                             else:  # long months
-        #                                 release_day = str(release_day)
-        #                                 break
-        #                         else:
-        #                             release_day = str(release_day)
-        #                             break
-        #                 else:
-        #                     break
-        #             except ValueError:
-        #                 print("That is not a valid date")
-        #         if release_day != "/":  # didn't cancel
         #             # developers
         #             print("Type DONE when all devs are added")
         #             while True:
@@ -710,6 +680,37 @@ def ask_release_day_add_game(month):
         except ValueError:
             print("That is not a valid date")
     return release_day, cont
+
+
+def ask_devs_add_game():
+    """ask the devs for the add game function"""
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cont = True
+    developers = []
+    print("Type DONE when all devs are added")
+    while True:
+        try:
+            this_dev = input("ID of developer: ")
+            if this_dev == "DONE":
+                break
+            elif this_dev == "/":
+                cont = False
+                break
+            elif len(this_dev) > 6:
+                print("That ID doesn't exist")
+            else:
+                this_dev = int(this_dev)
+                cursor.execute("SELECT name FROM Developer WHERE id = ?;", (this_dev,))
+                test = cursor.fetchone()
+                if not test:  # No dev found
+                    print("That ID doesn't exist")
+                else:
+                    developers.append(this_dev)
+        except ValueError:
+            print("That is not a valid id")
+    conn.close()
+    return developers, cont
 
 
 if __name__ == "__main__":
