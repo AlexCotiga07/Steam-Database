@@ -466,7 +466,9 @@ def add_game():
                  ask_min_age,
                  ask_achievements,
                  ask_pos_reviews,
-                 ask_neg_reviews]
+                 ask_neg_reviews,
+                 ask_median_playtime,
+                 ask_average_playtime]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
@@ -834,6 +836,50 @@ def ask_neg_reviews():
         except ValueError:
             print("Not a valid number")
     return reviews, cont
+
+
+def ask_median_playtime():
+    """ask for median playtime for adding to game"""
+    cont = True
+    while True:
+        try:
+            playtime = input("Median playtime (hours): ")
+            if playtime == "/":
+                cont = False
+                break
+            elif len(playtime) > 9:
+                print("Not a valid number")
+            else:
+                playtime = int(playtime)
+                if playtime < 0:
+                    print("Not a valid number")
+                else:
+                    break
+        except ValueError:
+            print("Not a valid number")
+    return playtime, cont
+
+
+def ask_average_playtime():
+    """ask for average playtime for adding to game"""
+    cont = True
+    while True:
+        try:
+            playtime = input("Average playtime (hours): ")
+            if playtime == "/":
+                cont = False
+                break
+            elif len(playtime) > 9:
+                print("Not a valid number")
+            else:
+                playtime = int(playtime)
+                if playtime < 0:
+                    print("Not a valid number")
+                else:
+                    break
+        except ValueError:
+            print("Not a valid number")
+    return playtime, cont
 
 
 if __name__ == "__main__":
