@@ -455,14 +455,16 @@ def add_game():
     publishers = []
     genres = []
 
-    functions = [ask_name_for_add_game, ask_release_year_add_game, ask_release_month_add_game, ask_release_day_add_game, ask_devs_add_game]
+    functions = [ask_name_for_add_game, ask_release_year_add_game, ask_release_month_add_game, ask_release_day_add_game, ask_devs_add_game, ask_publishers_add_game]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
         if func == ask_release_day_add_game:
             goal, cont = ask_release_day_add_game(month)
-        elif func == ask_devs_add_game:
+        elif func == ask_devs_add_game:  # Developers in seperate list
             developers, cont = ask_devs_add_game()
+        elif func == ask_publishers_add_game:  # Publishers in seperate list
+            publishers, cont = ask_publishers_add_game()
         else:
             goal, cont = func()
 
@@ -473,28 +475,6 @@ def add_game():
             month = goal
         
 
-    
-    
-        #             # developers
-        #             print("Type DONE when all devs are added")
-        #             while True:
-        #                 try:
-        #                     this_dev = input("ID of developer: ")
-        #                     if this_dev == "DONE" or this_dev == "/":
-        #                         break
-        #                     elif len(this_dev) > 6:
-        #                         print("That ID doesn't exist")
-        #                     else:
-        #                         this_dev = int(this_dev)
-        #                         cursor.execute("SELECT name FROM Developer WHERE id = ?;", (this_dev,))
-        #                         test = cursor.fetchone()
-        #                         if not test:  # No dev found
-        #                             print("That ID doesn't exist")
-        #                         else:
-        #                             developers.append(this_dev)
-        #                 except ValueError:
-        #                     print("That is not a valid id")
-        #             if this_dev != "/":  # didn't cancel
         #                 # publishers
         #                 print("Type DONE when all publishers are added")
         #                 while True:
@@ -688,12 +668,15 @@ def ask_devs_add_game():
     cursor = conn.cursor()
     cont = True
     developers = []
-    print("Type DONE when all devs are added")
+    print("Type DONE when all developers are added")
     while True:
         try:
             this_dev = input("ID of developer: ")
-            if this_dev == "DONE":
+            if this_dev == "DONE" and developers:
                 break
+            elif this_dev == "DONE" and not developers:
+                print("You must add at least one developer.")
+                print("If the intended developer doesn't exist in the database, cancel and add it.")
             elif this_dev == "/":
                 cont = False
                 break
@@ -711,6 +694,41 @@ def ask_devs_add_game():
             print("That is not a valid id")
     conn.close()
     return developers, cont
+
+
+def ask_publishers_add_game():
+    """ask publishers for adding a game"""
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cont = True
+    publishers = []
+    print("Type DONE when all publishers are added")
+    while True:
+        try:
+            this_publisher = input("ID of publisher: ")
+            if this_publisher == "DONE" and publishers:
+                break
+            elif this_publisher == "DONE" and not publishers:
+                print("You must add at least one publisher.")
+                print("If the intended publisher doesn't exist in the database, cancel and add it.")
+                break
+            elif this_publisher == "/":
+                cont = False
+                break
+            elif len(this_publisher) > 6:
+                print("That ID doesn't exist")
+            else:
+                this_publisher = int(this_publisher)
+                cursor.execute("SELECT name FROM Publisher WHERE id = ?;", (this_publisher,))
+                test = cursor.fetchone()
+                if not test:  # No publisher found
+                    print("That ID doesn't exist")
+                else:
+                    publishers.append(this_publisher)
+        except ValueError:
+            print("That is not a valid id")
+    conn.close()
+    return publishers, cont
 
 
 if __name__ == "__main__":
