@@ -455,7 +455,14 @@ def add_game():
     publishers = []
     genres = []
 
-    functions = [ask_name_for_add_game, ask_release_year_add_game, ask_release_month_add_game, ask_release_day_add_game, ask_devs_add_game, ask_publishers_add_game, ask_genres_add_game]
+    functions = [ask_name_for_add_game,
+                 ask_release_year_add_game,
+                 ask_release_month_add_game,
+                 ask_release_day_add_game,
+                 ask_devs_add_game,
+                 ask_publishers_add_game,
+                 ask_genres_add_game,
+                 ask_windows_compatablity]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
@@ -477,26 +484,6 @@ def add_game():
             month = goal
         
 
-        #                     # genres
-        #                     print("Type DONE when all genres are added")
-        #                     while True:
-        #                         try:
-        #                             this_genre = input("ID of genre: ")
-        #                             if this_genre == "DONE" or this_genre == "/":
-        #                                 break
-        #                             elif len(this_genre) > 6:
-        #                                 print("That ID doesn't exist")
-        #                             else:
-        #                                 this_genre = int(this_genre)
-        #                                 cursor.execute("SELECT name FROM Genre WHERE id = ?;", (this_genre,))
-        #                                 test = cursor.fetchone()
-        #                                 if not test:  # No genre found
-        #                                     print("That ID doesn't exist")
-        #                                 else:
-        #                                     genres.append(this_genre)
-        #                         except ValueError:
-        #                             print("That is not a valid id")
-        #                     if this_genre != "/":  # didn't cancel
         #                         # windows compat
         #                         while True:
         #                             windows_ask = input("Is the game compatable with Windows? Y or N: ")
@@ -744,6 +731,25 @@ def ask_genres_add_game():
             print("That is not a valid id")
     conn.close()
     return genres, cont
+
+
+def ask_windows_compatablity():
+    """ask compatability with windows for add game"""
+    cont = True
+    while True:
+        windows_ask = input("Is the game compatable with Windows? Y or N: ")
+        if windows_ask == "/":
+            cont = False
+            break
+        elif windows_ask == "Y":
+            windows = 1
+            break
+        elif windows_ask == "N":
+            windows = 0
+            break
+        else:
+            print("Not a valid answer")
+    return windows, cont
 
 
 if __name__ == "__main__":
