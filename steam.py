@@ -463,7 +463,8 @@ def add_game():
                  ask_windows_compatablity,
                  ask_mac_compatability,
                  ask_linux_compatability,
-                 ask_min_age]
+                 ask_min_age,
+                 ask_achievements]
 
     print("Make sure you know the ID of the genres, publishers and developers before starting.")
     for func in functions:
@@ -542,6 +543,7 @@ def ask_release_month_add_game():
                     break
                 else:
                     release_month = str(release_month)
+                    break
             else:
                 cont = False
                 break
@@ -605,7 +607,7 @@ def ask_devs_add_game():
             elif this_dev == "/":
                 cont = False
                 break
-            elif len(this_dev) > 6:
+            elif len(this_dev) > 9:
                 print("That ID doesn't exist")
             else:
                 this_dev = int(this_dev)
@@ -639,7 +641,7 @@ def ask_publishers_add_game():
             elif this_publisher == "/":
                 cont = False
                 break
-            elif len(this_publisher) > 6:
+            elif len(this_publisher) > 9:
                 print("That ID doesn't exist")
             else:
                 this_publisher = int(this_publisher)
@@ -673,7 +675,7 @@ def ask_genres_add_game():
             elif this_genre == "/":
                 cont = False
                 break
-            elif len(this_genre) > 6:
+            elif len(this_genre) > 9:
                 print("That ID doesn't exist")
             else:
                 this_genre = int(this_genre)
@@ -757,13 +759,35 @@ def ask_min_age():
                 break
             else:
                 age = int(age)
-                if age < 0 or age == -0:
+                if age < 0:
                     print("Not a valid age")
                 else:
                     break
         except ValueError:
             print("Not a valid age")
     return age, cont
+
+
+def ask_achievements():
+    """ask for achievements for adding to game"""
+    cont = True
+    while True:
+        try:
+            achievements = input("Amount of available achievements: ")
+            if achievements == "/":
+                cont = False
+                break
+            elif len(achievements) > 9:
+                print("Not a valid number")
+            else:
+                achievements = int(achievements)
+                if achievements < 0:
+                    print("Not a valid number")
+                else:
+                    break
+        except ValueError:
+            print("Not a valid number")
+    return achievements, cont
 
 
 if __name__ == "__main__":
