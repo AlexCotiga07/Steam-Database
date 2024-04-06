@@ -475,6 +475,7 @@ def add_game():
     for func in functions:
         if func == ask_release_day_add_game:
             goal, cont = ask_release_day_add_game(month)
+            game_table_stuff.append(goal)
         elif func == ask_devs_add_game:  # Developers in seperate list
             developers, cont = ask_devs_add_game()
         elif func == ask_publishers_add_game:  # Publishers in seperate list
@@ -489,6 +490,55 @@ def add_game():
             break
         elif func == ask_release_month_add_game:  # to save month
             month = goal
+    
+    if cont is True:  # didn't cancel
+        release_date = f"{game_table_stuff[1]}-{game_table_stuff[2]}-{game_table_stuff[3]}"  # format date
+        cursor.execute("INSERT INTO Game (name, \
+                                          releasedate, \
+                                          windowscompat, \
+                                          maccompat, \
+                                          linuxcompat, \
+                                          minage, \
+                                          achievments, \
+                                          negreviews, \
+                                          posreviews, \
+                                          averageplaytime, \
+                                          medianplaytime, \
+                                          price) \
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                       (game_table_stuff[0],  # name
+                        release_date,  # release date
+                        game_table_stuff[4],  # windows
+                        game_table_stuff[5],  # mac
+                        game_table_stuff[6],  # linux
+                        game_table_stuff[7],  # age
+                        game_table_stuff[8],  # achievements
+                        game_table_stuff[10],  # neg reviews
+                        game_table_stuff[9],  # pos reviews
+                        game_table_stuff[12],  # average pt
+                        game_table_stuff[11],  # median pt
+                        game_table_stuff[13]))  # price
+        conn.commit()
+        cursor.execute("SELECT id FROM Game WHERE name = ?;", (game_table_stuff[0],))
+        game_id = cursor.fetchone()
+        game_id = str(game_id[0])
+
+        for genre in genres:
+            genre = str(genre)
+            cursor.execute("INSERT INTO GameGenre VALUES (?, ?);", (game_id, genre))
+            conn.commit()
+
+        for dev in developers:
+            dev = str(dev)
+            cursor.execute("INSERT INTO GameDeveloper VALUES (?, ?);", (game_id, dev))
+            conn.commit()
+
+        for publisher in publishers:
+            publisher = str(publisher)
+            cursor.execute("INSERT INTO GamePublisher VALUES (?, ?);", (game_id, publisher))
+            conn.commit()
+
+        read_one(game_id)
 
     conn.close()  # Close connection to save efficiency
 
