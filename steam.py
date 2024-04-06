@@ -490,7 +490,7 @@ def add_game():
             break
         elif func == ask_release_month_add_game:  # to save month
             month = goal
-    
+
     if cont is True:  # didn't cancel
         release_date = f"{game_table_stuff[1]}-{game_table_stuff[2]}-{game_table_stuff[3]}"  # format date
         cursor.execute("INSERT INTO Game (name, \
@@ -955,6 +955,54 @@ def ask_price():
     return price, cont
 
 
+def delete_game():
+    """Delete a game and the associated rows in bridging tables"""
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+
+    cont = True
+    print("Make sure you know the ID of the game, type / to cancel.")
+    while True:
+        try:  # in case not int
+            game_id = input("ID of game: ")
+            if game_id != "/":
+                game_id = int(game_id)
+                # test if it exists
+                cursor.execute("SELECT name FROM Game WHERE id = ?;", (game_id,))
+                test = cursor.fetchone()
+                if not test:
+                    print("That ID doesn't exist")
+                else:
+                    while True:
+                        confirm = input(f"Are you sure you want to delete {test[0]}? Y/N: ")
+                        if confirm == "Y":  # Yes delete
+                            break
+                        elif confirm == "N":  # Don't delete
+                            break
+                        else:
+                            print("Invalid answer")
+                    if confirm == "Y":
+                        # genre
+                        cursor.execute("DELETE FROM GameGenre WHERE gameid = ?;", (game_id,))
+                        conn.commit()
+                        # developer
+                        cursor.execute("DELETE FROM GameDeveloper WHERE gameid = ?;", (game_id,))
+                        conn.commit()
+                        # publisher
+                        cursor.execute("DELETE FROM GamePublisher WHERE gameid = ?;", (game_id,))
+                        conn.commit()
+                        # game
+                        cursor.execute("DELETE FROM Game WHERE id = ?;", (game_id,))
+                        conn.commit()
+                    break
+            else:
+                break
+        except ValueError:
+            print("Not a valid ID")
+
+    conn.close()
+
+
 if __name__ == "__main__":
     while True:
         # read = input("Id of game: ")
@@ -974,5 +1022,6 @@ if __name__ == "__main__":
         # add_dev()
         # add_publisher()
         # add_genre()
-        add_game()
+        # add_game()
+        delete_game()
         break
