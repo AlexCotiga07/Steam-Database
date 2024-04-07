@@ -3,6 +3,7 @@ import math
 
 DATABASE_FILE = "steam.db"
 ITEMS_PER_PAGE = 40
+DASHES_FOR_SEPARATORS = 36
 
 
 def display_pages(type, data):
@@ -20,12 +21,12 @@ def display_pages(type, data):
             else:
                 amounts_min = amounts_min + 1
         # Print the data in a block
-        print("-"*36)
+        print("-"*DASHES_FOR_SEPARATORS)
         print(f"| {'ID':<7} | {type}")
-        print("-"*36)
+        print("-"*DASHES_FOR_SEPARATORS)
         for item in my_list:
             print(f"| {item[0]:<7} | {item[1]}")
-        print("-"*36)
+        print("-"*DASHES_FOR_SEPARATORS)
 
         # Page switching
         if page == 1 and page == max_pages:  # Only one page
@@ -537,6 +538,8 @@ def add_game():
             publisher = str(publisher)
             cursor.execute("INSERT INTO GamePublisher VALUES (?, ?);", (game_id, publisher))
             conn.commit()
+        
+        print(f"\nThe ID of the game is {game_id}.")
 
         read_one(game_id)
 
@@ -1003,6 +1006,159 @@ def delete_game():
     conn.close()
 
 
+def update_game():
+    """Update a part of the game data"""
+    # should only need reviews, playtime, achievements, platforms, age + price
+    # since the rest isn't subject to change
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cont = True
+
+    print("Type / at any time to cancel")
+    # asking game
+    while True:
+        try:
+            game_id = input("ID of game: ")
+            if game_id == "/":
+                cont = False
+                break
+            else:
+                game_id = int(game_id)
+                cursor.execute("SELECT name FROM Game WHERE id = ?;", (game_id,))
+                game_name = cursor.fetchone()
+                if not game_name:
+                    print("That game doesn't exist")
+                else:
+                    while True:  # ask confirmation
+                        check = input(f"Are you sure you want to update {game_name[0]}? Y/N: ")
+                        if check == "Y":
+                            break
+                        elif check == "N":
+                            cont = False
+                            break
+                        else:
+                            print("Not a valid command")
+                    break
+        except ValueError:
+            print("Not a valid ID")
+
+    if cont is True:
+        print("-"*DASHES_FOR_SEPARATORS)
+        print("1  - Windows compatability")
+        print("2  - Mac compatability")
+        print("3  - Linux compatability")
+        print("4  - Age rating")
+        print("5  - Achievements")
+        print("6  - Negative reviews")
+        print("7  - Postitive reviews")
+        print("8  - Average playtime")
+        print("9  - Median playtime")
+        print("10 - Price")
+        print("-"*DASHES_FOR_SEPARATORS)
+
+        while True:  # until input valid command
+            try:  # making into int
+                ask = input("Which part must be updated: ")
+                if ask == "/":
+                    cont = False
+                    break
+                else:
+                    ask = int(ask)
+                    if ask < 1 or ask > 10:
+                        print("Not a valid command")
+                    else:
+                        break
+            except ValueError:
+                print("Not a valid command")
+
+        if cont is True:
+            if ask == 1:  # windows compatability
+                new, cont = ask_windows_compatablity()
+                if cont is True:
+                    cursor.execute("UPDATE Game \
+                                    SET windowscompat = ? \
+                                    WHERE id = ?;",
+                                   (new, game_id))
+                    conn.commit()
+            elif ask == 2:  # mac compatability
+                new, cont = ask_mac_compatability()
+                if cont is True:
+                    cursor.execute("UPDATE Game \
+                                    SET maccompat = ? \
+                                    WHERE id = ?;",
+                                   (new, game_id))
+                    conn.commit()
+            elif ask == 3:  # linux compatability
+                new, cont = ask_linux_compatability()
+                if cont is True:
+                    cursor.execute("UPDATE Game \
+                                    SET linuxcompat = ? \
+                                    WHERE id = ?;",
+                                   (new, game_id))
+                    conn.commit()
+            elif ask == 4:  # min age
+                new, cont = ask_min_age()
+                if cont is True:
+                    cursor.execute("UPDATE Game \
+                                    SET minage = ? \
+                                    WHERE id = ?;",
+                                   (new, game_id))
+                    conn.commit()
+            elif ask == 5:  # achievements
+                print("Please write new total, not how many more or less")
+                new, cont = ask_achievements()
+                if cont is True:
+                    cursor.execute("UPDATE Game \
+                                    SET achievments = ? \
+                                    WHERE id = ?;",
+                                   (new, game_id))
+                    conn.commit()
+            elif ask == 6:  # negative reviews
+                print("Please write new total, not how many more")
+                new, cont = ask_neg_reviews()
+                if cont is True:
+                    cursor.execute("UPDATE Game \
+                                    SET negreviews = ? \
+                                    WHERE id = ?;",
+                                   (new, game_id))
+                    conn.commit()
+            elif ask == 7:  # positive reviews
+                print("Please write new total, not how many more")
+                new, cont = ask_pos_reviews()
+                if cont is True:
+                    cursor.execute("UPDATE Game \
+                                    SET posreviews = ? \
+                                    WHERE id = ?;",
+                                   (new, game_id))
+                    conn.commit()
+            elif ask == 8:  # average playtime
+                new, cont = ask_average_playtime()
+                if cont is True:
+                    cursor.execute("UPDATE Game \
+                                    SET averageplaytime = ? \
+                                    WHERE id = ?;",
+                                   (new, game_id))
+                    conn.commit()
+            elif ask == 9:  # median playtime
+                new, cont = ask_median_playtime()
+                if cont is True:
+                    cursor.execute("UPDATE Game \
+                                    SET medianplaytime = ? \
+                                    WHERE id = ?;",
+                                   (new, game_id))
+                    conn.commit()
+            elif ask == 10:  # price
+                new, cont = ask_price()
+                if cont is True:
+                    cursor.execute("UPDATE Game \
+                                    SET price = ? \
+                                    WHERE id = ?;",
+                                   (new, game_id))
+                    conn.commit()
+
+    conn.close()
+
+
 if __name__ == "__main__":
     while True:
         # read = input("Id of game: ")
@@ -1023,5 +1179,6 @@ if __name__ == "__main__":
         # add_publisher()
         # add_genre()
         # add_game()
-        delete_game()
+        # delete_game()
+        update_game()
         break
