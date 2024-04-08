@@ -1159,6 +1159,14 @@ def update_game():
     conn.close()
 
 
+def menu():
+    """menu to access all other functions"""
+    print("-"*DASHES_FOR_SEPARATORS)
+    while True:
+        try:
+
+
+
 if __name__ == "__main__":
     while True:
         # read = input("Id of game: ")
@@ -1180,5 +1188,5 @@ if __name__ == "__main__":
         # add_genre()
         # add_game()
         # delete_game()
-        update_game()
+        # update_game()
         break
