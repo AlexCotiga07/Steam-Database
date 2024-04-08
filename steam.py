@@ -1161,14 +1161,108 @@ def update_game():
 
 def menu():
     """menu to access all other functions"""
+    cont = True
     print("-"*DASHES_FOR_SEPARATORS)
+    print("1  - View data on one game")
+    print("2  - Show all genres")
+    print("3  - Show all developers")
+    print("4  - Show all publishers")
+    print("5  - Show all games in one genre")
+    print("6  - Show all games by one developer")
+    print("7  - Show all games by one publisher")
+    print("8  - Search game by name")
+    print("9  - Search developer by name")
+    print("10 - Search publisher by name")
+    print("11 - Exit program")
+    print("-"*DASHES_FOR_SEPARATORS)
+    command = input("\nInput command: ")
     while True:
-        try:
-
+        if command == "1":  # View one game
+            while True:
+                try:
+                    id = int(input("ID of game: "))
+                    if len(str(id)) > 7:
+                        print("Not a valid ID")
+                    elif id < 1:
+                        print("Not a valid ID")
+                    else:
+                        read_one(id)
+                        break
+                except ValueError:
+                    print("Not a valid ID")
+            break
+        elif command == "2":  # Show genres
+            show_genres()
+            break
+        elif command == "3":  # Show developers
+            show_developers()
+            break
+        elif command == "4":  # Show publishers
+            show_publishers()
+            break
+        elif command == "5":  # Show in genre
+            while True:
+                try:
+                    id = int(input("ID of genre: "))
+                    if len(str(id)) > 9:
+                        print("Not a valid ID")
+                    elif id < 1:
+                        print("Not a valid ID")
+                    else:
+                        show_in_genre(id)
+                        break
+                except ValueError:
+                    print("Not a valid ID")
+            break
+        elif command == "6":  # Show in dev
+            while True:
+                try:
+                    id = int(input("ID of developer: "))
+                    if len(str(id)) > 9:
+                        print("Not a valid ID")
+                    elif id < 1:
+                        print("Not a valid ID")
+                    else:
+                        show_in_dev(id)
+                        break
+                except ValueError:
+                    print("Not a valid ID")
+            break
+        elif command == "7":  # Show in publisher
+            while True:
+                try:
+                    id = int(input("ID of publisher: "))
+                    if len(str(id)) > 9:
+                        print("Not a valid ID")
+                    elif id < 1:
+                        print("Not a valid ID")
+                    else:
+                        show_in_publisher(id)
+                        break
+                except ValueError:
+                    print("Not a valid ID")
+            break
+        elif command == "8":  # search game by name
+            search_game_by_name()
+            break
+        elif command == "9":  # search dev by name
+            search_dev_by_name()
+            break
+        elif command == "10":  # search publisher by name
+            search_publisher_by_name()
+            break
+        elif command == "11":  # exit program
+            cont = False
+            break
+        else:
+            print("Invalid command")
+    return cont
 
 
 if __name__ == "__main__":
-    while True:
+    cont = True
+    while cont is True:
+        cont = menu()
         # read = input("Id of game: ")
         # read_one(read)
         # show_genres()
@@ -1189,4 +1283,3 @@ if __name__ == "__main__":
         # add_game()
         # delete_game()
         # update_game()
-        break
