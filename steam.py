@@ -350,17 +350,20 @@ def search_game_by_name():
 
     search = input("Search games by name: ")
     search = f"%{search}%"  # format so it searches correctly
-    cursor.execute("SELECT id, \
-                           name \
-                    FROM Game \
-                    WHERE name LIKE ? \
-                    ORDER BY name;", (search,))
-    games = cursor.fetchall()
-
-    if len(games) > 0:
-        display_pages("Game", games)
+    if len(search) > 200:
+        print("Search input is too long")
     else:
-        print("No results")
+        cursor.execute("SELECT id, \
+                            name \
+                        FROM Game \
+                        WHERE name LIKE ? \
+                        ORDER BY name;", (search,))
+        games = cursor.fetchall()
+
+        if len(games) > 0:
+            display_pages("Game", games)
+        else:
+            print("No results")
 
     conn.close()  # Close connection to save efficiency
 
@@ -373,17 +376,20 @@ def search_dev_by_name():
 
     search = input("Search developers by name: ")
     search = f"%{search}%"  # format so it searches correctly
-    cursor.execute("SELECT id, \
-                           name \
-                    FROM Developer \
-                    WHERE name LIKE ? \
-                    ORDER BY name;", (search,))
-    devs = cursor.fetchall()
-
-    if len(devs) > 0:
-        display_pages("Developer", devs)
+    if len(search) > 200:
+        print("Search input is too long")
     else:
-        print("No results")
+        cursor.execute("SELECT id, \
+                            name \
+                        FROM Developer \
+                        WHERE name LIKE ? \
+                        ORDER BY name;", (search,))
+        devs = cursor.fetchall()
+
+        if len(devs) > 0:
+            display_pages("Developer", devs)
+        else:
+            print("No results")
 
     conn.close()  # Close connection to save efficiency
 
@@ -396,17 +402,20 @@ def search_publisher_by_name():
 
     search = input("Search publishers by name: ")
     search = f"%{search}%"  # format so it searches correctly
-    cursor.execute("SELECT id, \
-                           name \
-                    FROM Publisher \
-                    WHERE name LIKE ? \
-                    ORDER BY name;", (search,))
-    publishers = cursor.fetchall()
-
-    if len(publishers) > 0:
-        display_pages("Publisher", publishers)
+    if len(search) > 200:
+        print("Search input is too long")
     else:
-        print("No results")
+        cursor.execute("SELECT id, \
+                            name \
+                        FROM Publisher \
+                        WHERE name LIKE ? \
+                        ORDER BY name;", (search,))
+        publishers = cursor.fetchall()
+
+        if len(publishers) > 0:
+            display_pages("Publisher", publishers)
+        else:
+            print("No results")
 
     conn.close()  # Close connection to save efficiency
 
