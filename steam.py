@@ -92,98 +92,102 @@ def read_one(id):
                     FROM Game \
                     WHERE id = ?;", (id,))
     game_data = cursor.fetchone()
-    # Genre collection
-    cursor.execute("SELECT Genre.name \
-                    FROM Genre \
-                        JOIN GameGenre ON GameGenre.genreid = Genre.id \
-                    WHERE GameGenre.gameid = ?;", (id,))
-    genre_data = cursor.fetchall()
-    # Dev collection
-    cursor.execute("SELECT Developer.name \
-                    FROM Developer \
-                        JOIN GameDeveloper ON GameDeveloper.devid = Developer.id \
-                    WHERE GameDeveloper.gameid = ?;", (id,))
-    dev_data = cursor.fetchall()
-    # Publisher collection
-    cursor.execute("SELECT Publisher.name \
-                    FROM Publisher \
-                        JOIN GamePublisher ON GamePublisher.publishid = Publisher.id \
-                    WHERE GamePublisher.gameid =?;", (id,))
-    publisher_data = cursor.fetchall()
-
-    # Printing data
-    # Name, release date, percentage
-    percent_rating = "%.1f" % (100*(game_data[8]/(game_data[8]+game_data[7])))
-    print()
-    print("-"*30)
-    print(f"{game_data[0]}   {percent_rating}%")
-    print(f"Release date (yyyy-mm-dd): {game_data[1]}")
-
-    # Minimum age
-    if game_data[5] > 0:  # Only print if age restricited
-        print(f"R{game_data[5]}")
-
-    # Available achievements
-    print(f"{game_data[6]} achievements available")
-
-    # Price
-    if game_data[11] == 0:
-        print("FREE")
+    # testing game exists
+    if not game_data:
+        print("That game doesn't exist")
     else:
-        if str(game_data[11])[-2] == ".":
-            price = str(game_data[11]) + "0"
-            print(f"${price}")
+        # Genre collection
+        cursor.execute("SELECT Genre.name \
+                        FROM Genre \
+                            JOIN GameGenre ON GameGenre.genreid = Genre.id \
+                        WHERE GameGenre.gameid = ?;", (id,))
+        genre_data = cursor.fetchall()
+        # Dev collection
+        cursor.execute("SELECT Developer.name \
+                        FROM Developer \
+                            JOIN GameDeveloper ON GameDeveloper.devid = Developer.id \
+                        WHERE GameDeveloper.gameid = ?;", (id,))
+        dev_data = cursor.fetchall()
+        # Publisher collection
+        cursor.execute("SELECT Publisher.name \
+                        FROM Publisher \
+                            JOIN GamePublisher ON GamePublisher.publishid = Publisher.id \
+                        WHERE GamePublisher.gameid =?;", (id,))
+        publisher_data = cursor.fetchall()
+
+        # Printing data
+        # Name, release date, percentage
+        percent_rating = "%.1f" % (100*(game_data[8]/(game_data[8]+game_data[7])))
+        print()
+        print("-"*30)
+        print(f"{game_data[0]}   {percent_rating}%")
+        print(f"Release date (yyyy-mm-dd): {game_data[1]}")
+
+        # Minimum age
+        if game_data[5] > 0:  # Only print if age restricited
+            print(f"R{game_data[5]}")
+
+        # Available achievements
+        print(f"{game_data[6]} achievements available")
+
+        # Price
+        if game_data[11] == 0:
+            print("FREE")
         else:
-            print(f"${game_data[11]}")
+            if str(game_data[11])[-2] == ".":
+                price = str(game_data[11]) + "0"
+                print(f"${price}")
+            else:
+                print(f"${game_data[11]}")
 
-    print()
+        print()
 
-    # Genres
-    print("Genres:")
-    for genre in genre_data:
-        print(genre[0])
+        # Genres
+        print("Genres:")
+        for genre in genre_data:
+            print(genre[0])
 
-    print()
+        print()
 
-    # Developers
-    print("Developers:")
-    for dev in dev_data:
-        print(dev[0])
+        # Developers
+        print("Developers:")
+        for dev in dev_data:
+            print(dev[0])
 
-    print()
+        print()
 
-    # Publishers
-    print("Publishers:")
-    for publisher in publisher_data:
-        print(publisher[0])
+        # Publishers
+        print("Publishers:")
+        for publisher in publisher_data:
+            print(publisher[0])
 
-    print()
+        print()
 
-    # Compatable systems
-    compats = []  # Storing compatable systems
-    if game_data[2] == 1:  # Check windows compatability
-        compats.append("Windows")
-    if game_data[3] == 1:  # Check mac compatability
-        compats.append("Mac")
-    if game_data[4] == 1:  # Check linux compatability
-        compats.append("Linux")
-    print("Compatable systems:")
-    for system in compats:
-        print(system)
+        # Compatable systems
+        compats = []  # Storing compatable systems
+        if game_data[2] == 1:  # Check windows compatability
+            compats.append("Windows")
+        if game_data[3] == 1:  # Check mac compatability
+            compats.append("Mac")
+        if game_data[4] == 1:  # Check linux compatability
+            compats.append("Linux")
+        print("Compatable systems:")
+        for system in compats:
+            print(system)
 
-    print()
+        print()
 
-    # Average and median playtimes
-    if game_data[9] == 0:
-        print("Average playtime unavailable")
-    else:
-        print(f"Average playtime: {game_data[9]} hours")
-    if game_data[10] == 0:
-        print("Median playtime unavailable")
-    else:
-        print(f"Median playtime: {game_data[10]} hours")
+        # Average and median playtimes
+        if game_data[9] == 0:
+            print("Average playtime unavailable")
+        else:
+            print(f"Average playtime: {game_data[9]} hours")
+        if game_data[10] == 0:
+            print("Median playtime unavailable")
+        else:
+            print(f"Median playtime: {game_data[10]} hours")
 
-    print("-"*30)
+        print("-"*30)
     conn.close()  # Close connection to save efficiency
 
 
@@ -247,23 +251,29 @@ def show_in_genre(id):
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
 
-    cursor.execute("SELECT Game.id, \
-                           Game.name \
-                    FROM Game \
-                    JOIN GameGenre ON GameGenre.gameid = Game.id \
-                    WHERE GameGenre.genreid = ? \
-                    ORDER BY Game.name;", (id,))
-    games = cursor.fetchall()
+    
     cursor.execute("SELECT name \
                     FROM Genre \
                     WHERE id = ?", (id,))
     genre = cursor.fetchone()
 
-    print()
-    print(f"Games in {genre[0]}")
+    # test if exists
+    if not genre:
+        print("That genre doesn't exist")
+    else:
+        cursor.execute("SELECT Game.id, \
+                            Game.name \
+                        FROM Game \
+                        JOIN GameGenre ON GameGenre.gameid = Game.id \
+                        WHERE GameGenre.genreid = ? \
+                        ORDER BY Game.name;", (id,))
+        games = cursor.fetchall()
 
-    # Print list of games in a block as pages
-    display_pages("Game", games)
+        print()
+        print(f"Games in {genre[0]}")
+
+        # Print list of games in a block as pages
+        display_pages("Game", games)
 
     conn.close()  # Close connection to save efficiency
 
@@ -274,23 +284,28 @@ def show_in_dev(id):
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
 
-    cursor.execute("SELECT Game.id, \
-                           Game.name \
-                    FROM Game \
-                    JOIN GameDeveloper ON GameDeveloper.gameid = Game.id \
-                    WHERE GameDeveloper.devid = ? \
-                    ORDER BY Game.name;", (id,))
-    games = cursor.fetchall()
     cursor.execute("SELECT name \
                     FROM Developer \
                     WHERE id = ?", (id,))
     developer = cursor.fetchone()
 
-    print()
-    print(f"Games by {developer[0]}")
+    # test if exists
+    if not developer:
+        print("That developer doesn't exist")
+    else:
+        cursor.execute("SELECT Game.id, \
+                            Game.name \
+                        FROM Game \
+                        JOIN GameDeveloper ON GameDeveloper.gameid = Game.id \
+                        WHERE GameDeveloper.devid = ? \
+                        ORDER BY Game.name;", (id,))
+        games = cursor.fetchall()
 
-    # Print list of games in a block as pages
-    display_pages("Game", games)
+        print()
+        print(f"Games by {developer[0]}")
+
+        # Print list of games in a block as pages
+        display_pages("Game", games)
 
     conn.close()  # Close connection to save efficiency
 
@@ -301,23 +316,28 @@ def show_in_publisher(id):
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
 
-    cursor.execute("SELECT Game.id, \
-                           Game.name \
-                    FROM Game \
-                    JOIN GamePublisher ON GamePublisher.gameid = Game.id \
-                    WHERE GamePublisher.publishid = ? \
-                    ORDER BY Game.name;", (id,))
-    games = cursor.fetchall()
     cursor.execute("SELECT name \
                     FROM Publisher \
                     WHERE id = ?", (id,))
     publisher = cursor.fetchone()
 
-    print()
-    print(f"Games by {publisher[0]}")
+    # test if exists
+    if not publisher:
+        print("That publlisher doesn't exist")
+    else:
+        cursor.execute("SELECT Game.id, \
+                            Game.name \
+                        FROM Game \
+                        JOIN GamePublisher ON GamePublisher.gameid = Game.id \
+                        WHERE GamePublisher.publishid = ? \
+                        ORDER BY Game.name;", (id,))
+        games = cursor.fetchall()
 
-    # Print list of games in a block as pages
-    display_pages("Game", games)
+        print()
+        print(f"Games by {publisher[0]}")
+
+        # Print list of games in a block as pages
+        display_pages("Game", games)
 
     conn.close()  # Close connection to save efficiency
 
@@ -1175,13 +1195,13 @@ def menu():
     print("10 - Search publisher by name")
     print("11 - Exit program")
     print("-"*DASHES_FOR_SEPARATORS)
-    command = input("\nInput command: ")
     while True:
+        command = input("\nInput command: ")
         if command == "1":  # View one game
             while True:
                 try:
                     id = int(input("ID of game: "))
-                    if len(str(id)) > 7:
+                    if len(str(id)) > 9:
                         print("Not a valid ID")
                     elif id < 1:
                         print("Not a valid ID")
@@ -1263,23 +1283,25 @@ if __name__ == "__main__":
     cont = True
     while cont is True:
         cont = menu()
-        # read = input("Id of game: ")
-        # read_one(read)
-        # show_genres()
-        # show_developers()
-        # show_publishers()
-        # genre_id = int(input("Id of genre: "))
-        # show_in_genre(genre_id)
-        # dev_id = int(input("Id of developer: "))
-        # show_in_dev(dev_id)
-        # publisher_id = int(input("Id of publisher: "))
-        # show_in_publisher(publisher_id)
-        # search_game_by_name()
-        # search_dev_by_name()
-        # search_publisher_by_name()
-        # add_dev()
-        # add_publisher()
-        # add_genre()
-        # add_game()
-        # delete_game()
-        # update_game()
+
+# All the functions for copy-pasting
+# read = input("Id of game: ")
+# read_one(read)
+# show_genres()
+# show_developers()
+# show_publishers()
+# genre_id = int(input("Id of genre: "))
+# show_in_genre(genre_id)
+# dev_id = int(input("Id of developer: "))
+# show_in_dev(dev_id)
+# publisher_id = int(input("Id of publisher: "))
+# show_in_publisher(publisher_id)
+# search_game_by_name()
+# search_dev_by_name()
+# search_publisher_by_name()
+# add_dev()
+# add_publisher()
+# add_genre()
+# add_game()
+# delete_game()
+# update_game()
