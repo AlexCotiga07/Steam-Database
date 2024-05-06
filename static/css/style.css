@@ -1,0 +1,14 @@
+body {
+    background-color: #07020d;
+    color: #f1e9db;
+    font-family: Monospace;
+}
+
+a {
+    text-decoration: none;
+    color: #f1e9db;
+}
+
+a:visited {
+    color: #f1e9db;
+}
