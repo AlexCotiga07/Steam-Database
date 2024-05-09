@@ -1,0 +1,16 @@
+{% extends "layout.html"%}
+{% block content %}
+
+<p>wow such games</p>
+
+{% for item in results %}
+<div class="w3-container">
+    <div>
+        <a href="game/{{item[0]}}">
+            <p>{{item[1]}}</p>
+        </a>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
