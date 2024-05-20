@@ -1,14 +1,56 @@
+/*--------------------------|
+|                           |
+|         UNIVERSAL         |
+|                           |
+|--------------------------*/
+
 body {
-    background-color: #07020d;
-    color: #f1e9db;
-    font: Monospace;
+    background-color: #160f29;
+    color: #f3dfc1;
 }
 
 a {
     text-decoration: none;
-    color: #f1e9db;
+    color: #f3dfc1;
 }
 
 a:visited {
-    color: #f1e9db;
+    color: #f3dfc1;
+}
+
+h2 {
+    margin: 0;
+}
+
+/*-------------------------|
+|                          |
+|          HEADER          |
+|                          |
+|-------------------------*/
+
+header {
+    font-size: larger;
+    text-align: center;
+    padding: 10px;
+}
+
+/*--------------------------|
+|                           |
+|          NAV BAR          |
+|                           |
+|--------------------------*/
+
+nav {
+    border-top: #246a73 1px solid;
+    border-bottom: #246a73 1px solid;
+    padding: 0 20%
+}
+
+.nav-item {
+    padding: 0;
+}
+
+.nav-item:hover {
+    background-color: #368f8b;
+    color: #160f29;
 }
