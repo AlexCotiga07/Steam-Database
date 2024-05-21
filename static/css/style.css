@@ -19,7 +19,7 @@ a:visited {
 }
 
 h2 {
-    margin: 0;
+    margin: 5px 0;
 }
 
 /*-------------------------|
@@ -43,14 +43,42 @@ header {
 nav {
     border-top: #246a73 1px solid;
     border-bottom: #246a73 1px solid;
-    padding: 0 20%
+    padding: 0px 20%;
+    position: sticky;
+    position: -webkit-sticky; /*Safari*/
+    top: 0;
+    background-color: #160f29;
 }
 
 .nav-item {
-    padding: 0;
+    padding: 10px 15px;
+    border-left: #246a73 solid 1px;
 }
 
 .nav-item:hover {
     background-color: #368f8b;
     color: #160f29;
+}
+
+/*-------------------------|
+|                          |
+|           BODY           |
+|                          |
+|-------------------------*/
+
+main {
+    margin: 0 20%;
+    border-left: #246a73 solid 1px;
+    border-right: #246a73 solid 1px;
+    height: 100%;
+    padding: 10px;
+}
+
+.item-block {
+    margin: 0;
+    padding: 0;
+}
+
+.game-title {
+    margin: 0;
 }

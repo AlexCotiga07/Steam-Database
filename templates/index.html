@@ -1,16 +1,14 @@
 {% extends "layout.html"%}
 {% block content %}
 
-<p>wow such games</p>
-
-<ul>
+<div class="item-block">
     {% for item in results %}
-    <li>
+    <div>
         <a href="game/{{item[0]}}">
             <p>{{item[1]}}</p>
         </a>
-    </li>
+    </div>
     {% endfor %}
-</ul>
+</div>
 
 {% endblock %}

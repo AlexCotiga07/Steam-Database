@@ -12,7 +12,7 @@ def query_db(sql, args=(), one=False):
     Will return only item if one=True and can accept arguments as a tuple"""
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    cursor.execute(sql, args)  # sql query and stuff that goes in ?
+    cursor.execute(sql, args)  # sql query and stuff that goes in the ?
     results = cursor.fetchall()  # for reading from db
     conn.commit()  # for making changes
     conn.close()
