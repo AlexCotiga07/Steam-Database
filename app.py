@@ -21,7 +21,7 @@ def query_db(sql, args=(), one=False):
 
 @app.route("/")
 def browsing():
-    results = query_db("SELECT id, name FROM Game")
+    results = query_db("SELECT id, name FROM Game ORDER BY name")
     return render_template("index.html", results=results)
 
 
@@ -30,6 +30,15 @@ def game(id):
     sql = "SELECT * FROM Game WHERE id = ?"
     game = query_db(sql, args=(id,), one=True)
     return render_template("game.html", game=game)
+
+
+@app.route('/search-results', methods=["get", "post"])
+def search():
+    item = request.form["search-query"]
+    item = f"%{item}%"
+    sql = "SELECT id, name FROM Game WHERE name LIKE ?;"
+    results = query_db(sql, (item,))
+    return render_template("search_results.html", results=results)
 
 
 if __name__ == "__main__":

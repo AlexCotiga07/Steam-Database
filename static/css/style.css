@@ -64,6 +64,13 @@ nav {
     overflow: hidden;
 }
 
+.topnav form {
+    float: right;
+    margin-right: 16px;
+    background-color: #368f8b;
+    margin-top: 8px
+}
+
 .topnav a {
     float: left;
     display: block;
@@ -79,9 +86,13 @@ nav {
 }
 
 .topnav input[type=text] {
-    float: right;
     padding: 6px;
-    margin: 8px 16px 0 0;
+    border: none;
+    font-size: 17px;
+}
+
+.topnav input[type=submit] {
+    padding: 6px;
     border: none;
     font-size: 17px;
 }
@@ -107,4 +118,14 @@ main {
 
 .game-title {
     margin: 0;
+}
+
+/*-------------------------|
+|                          |
+|          FOOTER          |
+|                          |
+|-------------------------*/
+
+footer {
+    border-top: #246a73 1px solid;
 }

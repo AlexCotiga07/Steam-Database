@@ -1,6 +1,7 @@
 <div class="topnav">
     <a href="/" class="nav-item">Back to browsing</a>
-    <div class="search-div">
-        <input type="text" placeholder="Search...">
-    </div>
+    <form action="/search-results" method="post">
+        <input type="text" placeholder="Search..." name="search-query">
+        <input type="submit" value="Submit">
+    </form>
 </div>
