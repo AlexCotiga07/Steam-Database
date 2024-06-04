@@ -66,7 +66,7 @@ nav {
 
 .topnav form {
     float: right;
-    margin-right: 16px;
+    margin-right: 8px;
     background-color: #368f8b;
     margin-top: 8px
 }
@@ -117,7 +117,22 @@ main {
 }
 
 .game-title {
-    margin: 0;
+    margin: 0 0 0 5px;
+}
+
+.game-info {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-auto-rows: minmax(min-content, max-content);
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.left-info, .right-info {
+    padding: 5px;
+    margin: 5px;
+    border: #246a73 1px solid;
+    height: 100%;
 }
 
 /*-------------------------|

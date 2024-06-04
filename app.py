@@ -29,7 +29,29 @@ def browsing():
 def game(id):
     sql = "SELECT * FROM Game WHERE id = ?"
     game = query_db(sql, args=(id,), one=True)
-    return render_template("game.html", game=game)
+    date = game[2]
+    if date[5] == 0 and date[6] == 1:  # january
+        month = 
+    sql = "SELECT * FROM Genre \
+           JOIN GameGenre \
+           ON GameGenre.genreid = Genre.id \
+           WHERE GameGenre.gameid = ?"
+    genres = query_db(sql, args=(id,))
+    sql = "SELECT * FROM Developer \
+           JOIN GameDeveloper \
+           ON GameDeveloper.devid = Developer.id \
+           WHERE GameDeveloper.gameid = ?"
+    developers = query_db(sql, args=(id,))
+    sql = "SELECT * FROM Publisher \
+           JOIN GamePublisher \
+           ON GamePublisher.publishid = Publisher.id \
+           WHERE GamePublisher.gameid = ?"
+    publishers = query_db(sql, args=(id,))
+    return render_template("game.html",
+                           game=game,
+                           genres=genres,
+                           developers=developers,
+                           publishers=publishers)
 
 
 @app.route('/search-results', methods=["get", "post"])

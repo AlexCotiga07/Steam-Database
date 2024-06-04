@@ -1,9 +1,21 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div>
-    <h1 class="game-title">{{game[1]}}</h1>
-    <p>{{game}}</p>
+<h1 class="game-title">{{game[1]}}</h1>
+<div class="game-info">
+    <div class="left-info">
+        <h3>Genres:</h3>
+        <ul>
+            {% for genre in genres %}
+            <li>
+                {{genre[1]}}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="right-info">
+        sup
+    </div>
 </div>
 
 {% endblock %}
