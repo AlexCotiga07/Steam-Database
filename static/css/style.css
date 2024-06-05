@@ -135,6 +135,14 @@ main {
     height: 100%;
 }
 
+.compatible {
+    display: disc;
+}
+
+.not-compatible {
+    display: none;
+}
+
 /*-------------------------|
 |                          |
 |          FOOTER          |

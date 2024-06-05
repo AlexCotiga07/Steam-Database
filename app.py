@@ -29,6 +29,8 @@ def browsing():
 def game(id):
     sql = "SELECT * FROM Game WHERE id = ?"
     game = query_db(sql, args=(id,), one=True)
+
+    # Turn month into a word
     if game[2][5] == "0" and game[2][6] == "1":  # january
         month = "January"
     elif game[2][5] == "0" and game[2][6] == "2":  # february
@@ -53,8 +55,21 @@ def game(id):
         month = "November"
     elif game[2][5] == "1" and game[2][6] == "2":  # december
         month = "December"
+
+    # System compatability
+    if game[3] == 1:
+        windows = "compatible"
     else:
-        month = "You messed up"
+        windows = "not-compatible"
+    if game[4] == 1:
+        mac = "compatible"
+    else:
+        mac = "not-compatible"
+    if game[5] == 1:
+        linux = "compatible"
+    else:
+        linux = "not-compatible"
+
     sql = "SELECT * FROM Genre \
            JOIN GameGenre \
            ON GameGenre.genreid = Genre.id \
@@ -75,7 +90,10 @@ def game(id):
                            genres=genres,
                            developers=developers,
                            publishers=publishers,
-                           month=month)
+                           month=month,
+                           windows=windows,
+                           mac=mac,
+                           linux=linux)
 
 
 @app.route('/search-results', methods=["get", "post"])
