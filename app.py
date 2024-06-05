@@ -29,9 +29,32 @@ def browsing():
 def game(id):
     sql = "SELECT * FROM Game WHERE id = ?"
     game = query_db(sql, args=(id,), one=True)
-    date = game[2]
-    if date[5] == 0 and date[6] == 1:  # january
-        month = 
+    if game[2][5] == "0" and game[2][6] == "1":  # january
+        month = "January"
+    elif game[2][5] == "0" and game[2][6] == "2":  # february
+        month = "February"
+    elif game[2][5] == "0" and game[2][6] == "3":  # march
+        month = "March"
+    elif game[2][5] == "0" and game[2][6] == "4":  # april
+        month = "April"
+    elif game[2][5] == "0" and game[2][6] == "5":  # may
+        month = "May"
+    elif game[2][5] == "0" and game[2][6] == "6":  # june
+        month = "June"
+    elif game[2][5] == "0" and game[2][6] == "7":  # july
+        month = "July"
+    elif game[2][5] == "0" and game[2][6] == "8":  # august
+        month = "August"
+    elif game[2][5] == "0" and game[2][6] == "9":  # september
+        month = "September"
+    elif game[2][5] == "1" and game[2][6] == "0":  # october
+        month = "October"
+    elif game[2][5] == "1" and game[2][6] == "1":  # november
+        month = "November"
+    elif game[2][5] == "1" and game[2][6] == "2":  # december
+        month = "December"
+    else:
+        month = "You messed up"
     sql = "SELECT * FROM Genre \
            JOIN GameGenre \
            ON GameGenre.genreid = Genre.id \
@@ -51,7 +74,8 @@ def game(id):
                            game=game,
                            genres=genres,
                            developers=developers,
-                           publishers=publishers)
+                           publishers=publishers,
+                           month=month)
 
 
 @app.route('/search-results', methods=["get", "post"])
