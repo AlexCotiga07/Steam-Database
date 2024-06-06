@@ -57,6 +57,8 @@ def game(id):
         month = "December"
 
     # System compatability
+    # The variables are used to change the class of the text
+    # so if it's not compatible the text won't show
     if game[3] == 1:
         windows = "compatible"
     else:
@@ -69,6 +71,27 @@ def game(id):
         linux = "compatible"
     else:
         linux = "not-compatible"
+
+    # Popularity (% liked)
+    percent_rating = "%.1f" % (100*(game[9]/(game[8]+game[9])))
+
+    # Age rating
+    # The variables are used to change the class of the text
+    # so if it's not restricted the text won't show
+    if game[6] == 0:
+        age_restrict = "any-age"
+    else:
+        age_restrict = "age_restricted"
+
+    # Playtime
+    if game[10] == 0:
+        average_pt = "Unavailable"
+    else:
+        average_pt = f"{game[10]} hours"
+    if game[11] == 0:
+        median_pt = "Unavailable"
+    else:
+        median_pt = f"{game[11]} hours"
 
     sql = "SELECT * FROM Genre \
            JOIN GameGenre \
@@ -93,7 +116,11 @@ def game(id):
                            month=month,
                            windows=windows,
                            mac=mac,
-                           linux=linux)
+                           linux=linux,
+                           percent_rating=percent_rating,
+                           age_restrict=age_restrict,
+                           average_pt=average_pt,
+                           median_pt=median_pt)
 
 
 @app.route('/search-results', methods=["get", "post"])

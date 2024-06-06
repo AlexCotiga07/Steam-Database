@@ -22,7 +22,27 @@
         </ul>
     </div>
     <div class="right-info">
-        sup
+        <h3>{{percent_rating}}% liked this</h3>
+        <h3 class={{age_restrict}}>R{{game[6]}}</h3>
+        <h3>{{game[7]}} available achievements</h3>
+        <h3>Developer(s):</h3>
+        <ul>
+            {% for dev in developers %}
+            <li>
+                {{dev[1]}}
+            </li>
+            {% endfor %}
+        </ul>
+        <h3>Publisher(s):</h3>
+        <ul>
+            {% for publisher in publishers %}
+            <li>
+                {{publisher[1]}}
+            </li>
+            {% endfor %}
+        </ul>
+        <h3>Average playtime: {{average_pt}}</h3>
+        <h3>Median playtime: {{median_pt}}</h3>
     </div>
 </div>
 
