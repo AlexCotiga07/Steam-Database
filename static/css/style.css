@@ -97,6 +97,10 @@ nav {
     font-size: 17px;
 }
 
+.topnav {
+    border-right: #246a73 1px solid;
+}
+
 /*-------------------------|
 |                          |
 |           BODY           |

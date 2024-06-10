@@ -9,7 +9,7 @@ DATABASE = "steam.db"
 
 def query_db(sql, args=(), one=False):
     """Connect and query, to collect data quicker.
-    Will return only item if one=True and can accept arguments as a tuple"""
+    Will return only one item if one=True and can accept arguments as a tuple"""
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute(sql, args)  # sql query and stuff that goes in the ?
@@ -130,9 +130,12 @@ def game(id):
 def search():
     item = request.form["search-query"]
     item = f"%{item}%"
-    sql = "SELECT id, name FROM Game WHERE name LIKE ?;"
+    sql = "SELECT id, name FROM Game WHERE name LIKE ? ORDER BY name;"
     results = query_db(sql, (item,))
-    return render_template("search_results.html", results=results)
+    if not results:
+        return render_template("empty_page.html")
+    else:
+        return render_template("search_results.html", results=results)
 
 @app.errorhandler(404)
 def page_not_found_404(e):
