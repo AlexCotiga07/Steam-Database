@@ -1,0 +1,14 @@
+{% extends "layout.html"%}
+{% block content %}
+
+<div class="item-block">
+    {% for item in results %}
+    <div>
+        <a href="game/{{item[0]}}">
+            <p>{{item[1]}}</p>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

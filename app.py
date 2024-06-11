@@ -137,9 +137,16 @@ def search():
     else:
         return render_template("search_results.html", results=results)
 
+
 @app.errorhandler(404)
 def page_not_found_404(e):
     return render_template("404.html"), 404
+
+
+@app.route("/most_played")
+def most_played():
+    results = query_db("SELECT id, name FROM Game ORDER BY medianplaytime DESC")
+    return render_template("most_played.html", results=results)
 
 
 if __name__ == "__main__":
