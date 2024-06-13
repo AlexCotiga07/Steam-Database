@@ -59,6 +59,15 @@ def game(id):
         elif game[2][5] == "1" and game[2][6] == "2":  # december
             month = "December"
 
+        # price
+        if game[12] == 0:
+            price = "FREE"
+        else:
+            if str(game[11])[-2] == ".":
+                price = f"NZ${game[12]}0"
+            else:
+                price = f"NZ${game[12]}"
+
         # System compatability
         # The variables are used to change the class of the text
         # so if it's not compatible the text won't show
@@ -117,6 +126,7 @@ def game(id):
                                developers=developers,
                                publishers=publishers,
                                month=month,
+                               price=price,
                                windows=windows,
                                mac=mac,
                                linux=linux,
@@ -145,8 +155,19 @@ def page_not_found_404(e):
 
 @app.route("/most_played")
 def most_played():
-    results = query_db("SELECT id, name FROM Game ORDER BY medianplaytime DESC")
+    results = query_db("SELECT id, name \
+                        FROM Game \
+                        ORDER BY medianplaytime DESC")
     return render_template("most_played.html", results=results)
+
+
+@app.route("/free_games")
+def free_games():
+    results = query_db("SELECT id, name \
+                        FROM Game \
+                        WHERE price = 0 \
+                        ORDER BY name;")
+    return render_template("free_games.html", results=results)
 
 
 if __name__ == "__main__":
