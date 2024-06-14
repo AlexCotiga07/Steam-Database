@@ -1,10 +1,12 @@
 {% extends "layout.html"%}
 {% block content %}
 
+<a href="/browsing/{{page-1}}">previous</a> <a href="/browsing/{{page+1}}">next</a>
+
 <div class="item-block">
     {% for item in results %}
     <div>
-        <a href="game/{{item[0]}}">
+        <a href="/game/{{item[0]}}">
             <p>{{item[1]}}</p>
         </a>
     </div>

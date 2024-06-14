@@ -5,11 +5,15 @@ from sqlalchemy import true
 app = Flask(__name__)
 
 DATABASE = "steam.db"
+LIMIT = 50
+OFFSET = 0
+PAGE = 1
+page = PAGE
 
 
 def query_db(sql, args=(), one=False):
     """Connect and query, to collect data quicker.
-    Will return only one item if one=True and can accept arguments as a tuple"""
+    Will return one item if one=True and can accept arguments as a tuple"""
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute(sql, args)  # sql query and stuff that goes in the ?
@@ -20,9 +24,18 @@ def query_db(sql, args=(), one=False):
 
 
 @app.route("/")
-def browsing():
-    results = query_db("SELECT id, name FROM Game ORDER BY name")
-    return render_template("index.html", results=results)
+def landing():
+    return redirect("/browsing/1")
+
+
+@app.route("/browsing/<int:page>")
+def browsing(page):
+    offset = (page-1)*LIMIT
+    results = query_db("SELECT id, name \
+                        FROM Game \
+                        ORDER BY name LIMIT ? OFFSET ?",
+                       (LIMIT, offset))
+    return render_template("index.html", results=results, page=page)
 
 
 @app.route("/game/<int:id>")
@@ -60,10 +73,11 @@ def game(id):
             month = "December"
 
         # price
+        print(game)
         if game[12] == 0:
             price = "FREE"
         else:
-            if str(game[11])[-2] == ".":
+            if str(game[12])[-2] == ".":
                 price = f"NZ${game[12]}0"
             else:
                 price = f"NZ${game[12]}"
