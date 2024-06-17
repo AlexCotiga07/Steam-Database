@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import sqlite3
 from sqlalchemy import true
+import math
 
 app = Flask(__name__)
 
@@ -31,11 +32,28 @@ def landing():
 @app.route("/browsing/<int:page>")
 def browsing(page):
     offset = (page-1)*LIMIT
-    results = query_db("SELECT id, name \
-                        FROM Game \
-                        ORDER BY name LIMIT ? OFFSET ?",
-                       (LIMIT, offset))
-    return render_template("index.html", results=results, page=page)
+    rows = query_db("SELECT COUNT(name) FROM Game")
+    if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
+        return render_template("404.html")
+    else:
+        if page == 1:
+            previous = "hide"
+            next_page = "visible"
+        elif page == (math.ceil(int(rows[0][0])/LIMIT)):
+            previous = "visible"
+            next_page = "hide"
+        else:
+            previous = "visible"
+            next_page = "visible"
+        results = query_db("SELECT id, name \
+                            FROM Game \
+                            ORDER BY name LIMIT ? OFFSET ?",
+                           (LIMIT, offset))
+        return render_template("index.html",
+                               results=results,
+                               page=page,
+                               previous=previous,
+                               next_page=next_page)
 
 
 @app.route("/game/<int:id>")

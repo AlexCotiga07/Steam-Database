@@ -143,11 +143,11 @@ main {
     display: disc;
 }
 
-.not-compatible, .any-age {
+.not-compatible, .any-age, .hide {
     display: none;
 }
 
-.age_restricted {
+.age_restricted, .visible {
     display: block;
 }
 
