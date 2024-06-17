@@ -1,6 +1,8 @@
 {% extends "layout.html"%}
 {% block content %}
 
+<a href="/most_played/{{page-1}}" class="{{previous}}">previous</a> <a href="/most_played/{{page+1}}" class="{{next_page}}">next</a>
+
 <div class="item-block">
     {% for item in results %}
     <div>

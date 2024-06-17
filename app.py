@@ -172,8 +172,8 @@ def game(id):
 def search():
     item = request.form["search-query"]
     item = f"%{item}%"
-    sql = "SELECT id, name FROM Game WHERE name LIKE ? ORDER BY name;"
-    results = query_db(sql, (item,))
+    sql = "SELECT id, name FROM Game WHERE name LIKE ? ORDER BY name LIMIT ?;"
+    results = query_db(sql, (item, LIMIT))
     if not results:
         return render_template("empty_page.html")
     else:
@@ -185,21 +185,67 @@ def page_not_found_404(e):
     return render_template("404.html"), 404
 
 
-@app.route("/most_played")
-def most_played():
+@app.route("/most_played/<int:page>")
+def most_played(page):
+    offset = (page-1)*LIMIT
     results = query_db("SELECT id, name \
                         FROM Game \
                         ORDER BY medianplaytime DESC")
-    return render_template("most_played.html", results=results)
+    # page organising
+    rows = query_db("SELECT COUNT(name) FROM Game")
+    if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
+        return render_template("404.html")
+    else:
+        if page == 1:
+            previous = "hide"
+            next_page = "visible"
+        elif page == (math.ceil(int(rows[0][0])/LIMIT)):
+            previous = "visible"
+            next_page = "hide"
+        else:
+            previous = "visible"
+            next_page = "visible"
+        results = query_db("SELECT id, name \
+                            FROM Game \
+                            ORDER BY name LIMIT ? OFFSET ?",
+                           (LIMIT, offset))
+        return render_template("most_played.html",
+                               results=results,
+                               page=page,
+                               previous=previous,
+                               next_page=next_page)
 
 
-@app.route("/free_games")
-def free_games():
+@app.route("/free_games/<int:page>")
+def free_games(page):
+    offset = (page-1)*LIMIT
     results = query_db("SELECT id, name \
                         FROM Game \
                         WHERE price = 0 \
                         ORDER BY name;")
-    return render_template("free_games.html", results=results)
+    # page organising
+    rows = query_db("SELECT COUNT(name) FROM Game WHERE price = 0")
+    if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
+        return render_template("404.html")
+    else:
+        if page == 1:
+            previous = "hide"
+            next_page = "visible"
+        elif page == (math.ceil(int(rows[0][0])/LIMIT)):
+            previous = "visible"
+            next_page = "hide"
+        else:
+            previous = "visible"
+            next_page = "visible"
+        results = query_db("SELECT id, name \
+                            FROM Game \
+                            ORDER BY name LIMIT ? OFFSET ?",
+                           (LIMIT, offset))
+        return render_template("free_games.html",
+                               results=results,
+                               page=page,
+                               previous=previous,
+                               next_page=next_page)
 
 
 if __name__ == "__main__":
