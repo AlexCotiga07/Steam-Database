@@ -237,10 +237,10 @@ def free_games(page):
         else:
             previous = "visible"
             next_page = "visible"
-        results = query_db("SELECT id, name \
-                            FROM Game \
-                            ORDER BY name LIMIT ? OFFSET ?",
-                           (LIMIT, offset))
+            results = query_db("SELECT id, name \
+                                FROM Game \
+                                ORDER BY name LIMIT ? OFFSET ?",
+                            (LIMIT, offset))
         return render_template("free_games.html",
                                results=results,
                                page=page,
