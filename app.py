@@ -188,9 +188,6 @@ def page_not_found_404(e):
 @app.route("/most_played/<int:page>")
 def most_played(page):
     offset = (page-1)*LIMIT
-    results = query_db("SELECT id, name \
-                        FROM Game \
-                        ORDER BY medianplaytime DESC")
     # page organising
     rows = query_db("SELECT COUNT(name) FROM Game")
     if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
@@ -207,7 +204,8 @@ def most_played(page):
             next_page = "visible"
         results = query_db("SELECT id, name \
                             FROM Game \
-                            ORDER BY name LIMIT ? OFFSET ?",
+                            ORDER BY medianplaytime DESC\
+                            LIMIT ? OFFSET ?",
                            (LIMIT, offset))
         return render_template("most_played.html",
                                results=results,
@@ -219,10 +217,6 @@ def most_played(page):
 @app.route("/free_games/<int:page>")
 def free_games(page):
     offset = (page-1)*LIMIT
-    results = query_db("SELECT id, name \
-                        FROM Game \
-                        WHERE price = 0 \
-                        ORDER BY name;")
     # page organising
     rows = query_db("SELECT COUNT(name) FROM Game WHERE price = 0")
     if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
@@ -237,11 +231,42 @@ def free_games(page):
         else:
             previous = "visible"
             next_page = "visible"
-            results = query_db("SELECT id, name \
-                                FROM Game \
-                                ORDER BY name LIMIT ? OFFSET ?",
-                            (LIMIT, offset))
+        results = query_db("SELECT id, name \
+                            FROM Game \
+                            WHERE price = 0 \
+                            ORDER BY name LIMIT ? OFFSET ?",
+                           (LIMIT, offset))
         return render_template("free_games.html",
+                               results=results,
+                               page=page,
+                               previous=previous,
+                               next_page=next_page)
+
+
+@app.route("/highest_rated/<int:page>")
+def highest_rated(page):
+    offset = (page-1)*LIMIT
+    # page organising
+    rows = query_db("SELECT COUNT(name) FROM Game WHERE negreviews > 0 AND posreviews > 0")
+    if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
+        return render_template("404.html")
+    else:
+        if page == 1:
+            previous = "hide"
+            next_page = "visible"
+        elif page == (math.ceil(int(rows[0][0])/LIMIT)):
+            previous = "visible"
+            next_page = "hide"
+        else:
+            previous = "visible"
+            next_page = "visible"
+        results = query_db("SELECT id, name \
+                            FROM Game \
+                            WHERE negreviews > 0 AND posreviews > 0 \
+                            ORDER BY (10000 * posreviews / (posreviews + negreviews)) DESC \
+                            LIMIT ? OFFSET ?",
+                           (LIMIT, offset))
+        return render_template("highest_rated.html",
                                results=results,
                                page=page,
                                previous=previous,
