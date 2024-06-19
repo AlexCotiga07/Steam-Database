@@ -91,7 +91,6 @@ def game(id):
             month = "December"
 
         # price
-        print(game)
         if game[12] == 0:
             price = "FREE"
         else:
@@ -123,9 +122,9 @@ def game(id):
         # The variables are used to change the class of the text
         # so if it's not restricted the text won't show
         if game[6] == 0:
-            age_restrict = "any-age"
+            age_restrict = "hide"
         else:
-            age_restrict = "age_restricted"
+            age_restrict = "visible"
 
         # Playtime
         if game[10] == 0:
