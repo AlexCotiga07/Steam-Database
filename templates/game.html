@@ -8,7 +8,9 @@
         <ul>
             {% for genre in genres %}
             <li>
-                {{genre[1]}}
+                <a href="/genre_browsing/{{genre[0]}}/1">
+                    {{genre[1]}}
+                </a>
             </li>
             {% endfor %}
         </ul>

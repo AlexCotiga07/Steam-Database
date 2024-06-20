@@ -272,5 +272,37 @@ def highest_rated(page):
                                next_page=next_page)
 
 
+@app.route("/genre_browsing/<int:id>/<int:page>")
+def genre_browsing(id, page):
+    offset = (page-1)*LIMIT
+    # page organising
+    rows = query_db("SELECT COUNT(Game.name) FROM Game JOIN GameGenre ON Game.id = GameGenre.gameid WHERE GameGenre.genreid = ?", (id,))
+    if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
+        return render_template("404.html")
+    else:
+        if page == 1:
+            previous = "hide"
+            next_page = "visible"
+        elif page == (math.ceil(int(rows[0][0])/LIMIT)):
+            previous = "visible"
+            next_page = "hide"
+        else:
+            previous = "visible"
+            next_page = "visible"
+        results = query_db("SELECT Game.id, Game.name \
+                            FROM Game \
+                            JOIN GameGenre ON Game.id = GameGenre.gameid \
+                            WHERE GameGenre.genreid = ? \
+                            ORDER BY Game.name \
+                            LIMIT ? OFFSET ?",
+                           (id, LIMIT, offset))
+        return render_template("genre_browsing.html",
+                               results=results,
+                               id=id,
+                               page=page,
+                               previous=previous,
+                               next_page=next_page)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
