@@ -383,5 +383,38 @@ def publisher_browsing(id, page):
                                next_page=next_page)
 
 
+@app.route("/windows/<int:page>")
+def windows_browsing(page):
+    offset = (page-1)*LIMIT
+    # page organising
+    rows = query_db("SELECT COUNT(name) FROM Game WHERE windowscompat = 1")
+    if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
+        return render_template("404.html")
+    else:
+        if (math.ceil(int(rows[0][0])/LIMIT)) == 1:
+            previous = "hide"
+            next_page = "hide"
+        elif page == 1:
+            previous = "hide"
+            next_page = "visible"
+        elif page == (math.ceil(int(rows[0][0])/LIMIT)):
+            previous = "visible"
+            next_page = "hide"
+        else:
+            previous = "visible"
+            next_page = "visible"
+        results = query_db("SELECT id, name \
+                            FROM Game \
+                            WHERE windowscompat = 1 \
+                            ORDER BY name \
+                            LIMIT ? OFFSET ?",
+                           (LIMIT, offset))
+        return render_template("windows.html",
+                               results=results,
+                               page=page,
+                               previous=previous,
+                               next_page=next_page)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
