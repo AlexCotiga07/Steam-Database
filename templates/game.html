@@ -41,7 +41,9 @@
         <ul>
             {% for publisher in publishers %}
             <li>
-                {{publisher[1]}}
+                <a href="/publisher_browsing/{{publisher[0]}}/1">
+                    {{publisher[1]}}
+                </a>
             </li>
             {% endfor %}
         </ul>

@@ -7,9 +7,6 @@ app = Flask(__name__)
 
 DATABASE = "steam.db"
 LIMIT = 50
-OFFSET = 0
-PAGE = 1
-page = PAGE
 
 
 def query_db(sql, args=(), one=False):
@@ -344,6 +341,41 @@ def dev_browsing(id, page):
                             LIMIT ? OFFSET ?",
                            (id, LIMIT, offset))
         return render_template("dev_browsing.html",
+                               results=results,
+                               id=id,
+                               page=page,
+                               previous=previous,
+                               next_page=next_page)
+
+
+@app.route("/publisher_browsing/<int:id>/<int:page>")
+def publisher_browsing(id, page):
+    offset = (page-1)*LIMIT
+    # page organising
+    rows = query_db("SELECT COUNT(Game.name) FROM Game JOIN GamePublisher ON Game.id = GamePublisher.gameid WHERE GamePublisher.publishid = ?", (id,))
+    if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
+        return render_template("404.html")
+    else:
+        if (math.ceil(int(rows[0][0])/LIMIT)) == 1:
+            previous = "hide"
+            next_page = "hide"
+        elif page == 1:
+            previous = "hide"
+            next_page = "visible"
+        elif page == (math.ceil(int(rows[0][0])/LIMIT)):
+            previous = "visible"
+            next_page = "hide"
+        else:
+            previous = "visible"
+            next_page = "visible"
+        results = query_db("SELECT Game.id, Game.name \
+                            FROM Game \
+                            JOIN GamePublisher ON Game.id = GamePublisher.gameid \
+                            WHERE GamePublisher.publishid = ? \
+                            ORDER BY Game.name \
+                            LIMIT ? OFFSET ?",
+                           (id, LIMIT, offset))
+        return render_template("publisher_browsing.html",
                                results=results,
                                id=id,
                                page=page,
