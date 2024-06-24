@@ -31,7 +31,9 @@
         <ul>
             {% for dev in developers %}
             <li>
-                {{dev[1]}}
+                <a href="/dev_browsing/{{dev[0]}}/1">
+                    {{dev[1]}}
+                </a>
             </li>
             {% endfor %}
         </ul>
