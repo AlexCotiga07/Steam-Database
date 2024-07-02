@@ -1,7 +1,7 @@
 {% extends "layout.html"%}
 {% block content %}
 
-<a href="/dev_browsing/{{id}}/{{page-1}}" class="{{previous}}">previous</a> <a href="/dev_browsing/{{id}}/{{page+1}}" class="{{next_page}}">next</a>
+<a href="/dev_browsing/{{id}}/{{page-1}}" class="{{previous}}"><</a> <h3>Games developed by {{dev[0][0]}}</h3> <a href="/dev_browsing/{{id}}/{{page+1}}" class="{{next_page}}">next</a>
 
 <div class="item-block">
     {% for item in results %}

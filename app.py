@@ -167,13 +167,13 @@ def game(id):
 @app.route('/search-results', methods=["get", "post"])
 def search():
     item = request.form["search-query"]
-    item = f"%{item}%"
+    itemm = f"%{item}%"
     sql = "SELECT id, name FROM Game WHERE name LIKE ? ORDER BY name LIMIT ?;"
-    results = query_db(sql, (item, LIMIT))
+    results = query_db(sql, (itemm, LIMIT))
     if not results:
-        return render_template("empty_page.html")
+        return render_template("empty_search.html", item=item)
     else:
-        return render_template("search_results.html", results=results)
+        return render_template("search_results.html", results=results, item=item)
 
 
 @app.errorhandler(404)
@@ -286,6 +286,7 @@ def genre_browsing(id, page):
     if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
         return render_template("404.html")
     else:
+        genre = query_db("SELECT name FROM Genre WHERE id = ?", (id,))
         if (math.ceil(int(rows[0][0])/LIMIT)) == 1:
             previous = "hide"
             next_page = "hide"
@@ -308,6 +309,7 @@ def genre_browsing(id, page):
         return render_template("genre_browsing.html",
                                results=results,
                                id=id,
+                               genre=genre,
                                page=page,
                                previous=previous,
                                next_page=next_page)
@@ -321,6 +323,7 @@ def dev_browsing(id, page):
     if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
         return render_template("404.html")
     else:
+        dev = query_db("SELECT name FROM Developer WHERE id = ?", (id,))
         if (math.ceil(int(rows[0][0])/LIMIT)) == 1:
             previous = "hide"
             next_page = "hide"
@@ -343,6 +346,7 @@ def dev_browsing(id, page):
         return render_template("dev_browsing.html",
                                results=results,
                                id=id,
+                               dev=dev,
                                page=page,
                                previous=previous,
                                next_page=next_page)
@@ -356,6 +360,7 @@ def publisher_browsing(id, page):
     if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
         return render_template("404.html")
     else:
+        publisher = query_db("SELECT name FROM Publisher WHERE id = ?", (id,))
         if (math.ceil(int(rows[0][0])/LIMIT)) == 1:
             previous = "hide"
             next_page = "hide"
@@ -378,6 +383,7 @@ def publisher_browsing(id, page):
         return render_template("publisher_browsing.html",
                                results=results,
                                id=id,
+                               publisher=publisher,
                                page=page,
                                previous=previous,
                                next_page=next_page)

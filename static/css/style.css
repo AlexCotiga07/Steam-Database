@@ -170,6 +170,18 @@ ul {
     margin: 15px;
 }
 
+.page-title {
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    padding-left: auto;
+    padding-right: auto;
+    width: 100%;
+}
+
+.page-title a, .page-title .title {
+    text-align: center;
+}
+
 /*-------------------------|
 |                          |
 |          FOOTER          |
