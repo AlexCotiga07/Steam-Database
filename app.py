@@ -33,15 +33,18 @@ def browsing(page):
     if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
         return render_template("404.html")
     else:
-        if page == 1:
+        if (math.ceil(int(rows[0][0])/LIMIT)) == 1:
             previous = "hide"
-            next_page = "visible"
+            next_page = "hide"
+        elif page == 1:
+            previous = "hide"
+            next_page = "next-page"
         elif page == (math.ceil(int(rows[0][0])/LIMIT)):
-            previous = "visible"
+            previous = "previous-page"
             next_page = "hide"
         else:
-            previous = "visible"
-            next_page = "visible"
+            previous = "previous-page"
+            next_page = "next-page"
         results = query_db("SELECT id, name \
                             FROM Game \
                             ORDER BY name LIMIT ? OFFSET ?",
