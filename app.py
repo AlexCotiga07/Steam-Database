@@ -261,13 +261,13 @@ def highest_rated(page):
             next_page = "hide"
         elif page == 1:
             previous = "hide"
-            next_page = "visible"
+            next_page = "next-page"
         elif page == (math.ceil(int(rows[0][0])/LIMIT)):
-            previous = "visible"
+            previous = "previous-page"
             next_page = "hide"
         else:
-            previous = "visible"
-            next_page = "visible"
+            previous = "previous-page"
+            next_page = "next-page"
         results = query_db("SELECT id, name \
                             FROM Game \
                             WHERE negreviews > 0 AND posreviews > 0 \

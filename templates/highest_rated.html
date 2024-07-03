@@ -1,7 +1,7 @@
 {% extends "layout.html"%}
 {% block content %}
 
-<a href="/highest_rated/{{page-1}}" class="{{previous}}">previous</a> <a href="/highest_rated/{{page+1}}" class="{{next_page}}">next</a>
+<h3 class="page-title"><a href="/highest_rated/{{page-1}}" class="{{previous}}"><</a> <div class = "title">Highest rated</div> <a href="/highest_rated/{{page+1}}" class="{{next_page}}">></a></h3>
 
 <div class="item-block">
     {% for item in results %}
