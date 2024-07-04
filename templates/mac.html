@@ -1,7 +1,11 @@
 {% extends "layout.html"%}
 {% block content %}
 
-<a href="/mac/{{page-1}}" class="{{previous}}">previous</a> <a href="/mac/{{page+1}}" class="{{next_page}}">next</a>
+<h3 class="page-title">
+    <a href="/mac/{{page-1}}" class="{{previous}}"><</a>
+    <div class = "title">Mac compatible games</div>
+    <a href="/mac/{{page+1}}" class="{{next_page}}">></a>
+</h3>
 
 <div class="item-block">
     {% for item in results %}

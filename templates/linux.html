@@ -1,7 +1,11 @@
 {% extends "layout.html"%}
 {% block content %}
 
-<a href="/linux/{{page-1}}" class="{{previous}}">previous</a> <a href="/linux/{{page+1}}" class="{{next_page}}">next</a>
+<h3 class="page-title">
+    <a href="/linux/{{page-1}}" class="{{previous}}"><</a>
+    <div class = "title">Linux compatible games</div>
+    <a href="/linux/{{page+1}}" class="{{next_page}}">></a>
+</h3>
 
 <div class="item-block">
     {% for item in results %}
