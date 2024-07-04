@@ -1,7 +1,11 @@
 {% extends "layout.html"%}
 {% block content %}
 
-<a href="/genre_browsing/{{id}}/{{page-1}}" class="{{previous}}">previous</a> <a href="/genre_browsing/{{id}}/{{page+1}}" class="{{next_page}}">next</a>
+<h3 class="page-title">
+    <a href="/genre_browsing/{{id}}/{{page-1}}" class="{{previous}}"><</a>
+    <div class = "title">Games in "{{genre[0][0]}}"</div>
+    <a href="/genre_browsing/{{id}}/{{page+1}}" class="{{next_page}}">></a>
+</h3>
 
 <div class="item-block">
     {% for item in results %}
