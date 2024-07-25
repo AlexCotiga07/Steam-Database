@@ -1,18 +1,33 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, flash
 import sqlite3
 from sqlalchemy import true
 import math
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+# key needed for sessions and flash messages
+app.config['SECRET_KEY'] = "AlexIsTheBest"
 
-DATABASE = "steam.db"
+STEAM_DATABASE = "steam.db"
+ACCOUNT_DATABASE = "accounts.db"
 LIMIT = 50
 
 
 def query_db(sql, args=(), one=False):
-    """Connect and query, to collect data quicker.
+    """Connect and query (steam), to collect data quicker.
     Will return one item if one=True and can accept arguments as a tuple"""
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(STEAM_DATABASE)
+    cursor = conn.cursor()
+    cursor.execute(sql, args)  # sql query and stuff that goes in the ?
+    results = cursor.fetchall()  # for reading from db
+    conn.commit()  # for making changes
+    conn.close()
+    return (results[0] if results else None) if one else results
+
+def query_accounts(sql, args=(), one=False):
+    """Connect and query (accounts), to collect data quicker.
+    Will return one item if one=True and can accept arguments as a tuple"""
+    conn = sqlite3.connect(ACCOUNT_DATABASE)
     cursor = conn.cursor()
     cursor.execute(sql, args)  # sql query and stuff that goes in the ?
     results = cursor.fetchall()  # for reading from db
@@ -122,7 +137,7 @@ def game(id):
         # The variables are used to change the class of the text
         # so if it's not restricted the text won't show
         if game[6] == 0:
-            age_restrict = "hide"
+            age_restrict = "any-age"
         else:
             age_restrict = "visible"
 
@@ -489,6 +504,49 @@ def linux_browsing(page):
                                page=page,
                                previous=previous,
                                next_page=next_page)
+
+
+@app.route("/login", methods=["GET","POST"])
+def login():
+    # if the user posts a username and password
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        # try to find this user in the database
+        sql = "SELECT * FROM user WHERE username = ?"
+        user = query_accounts(sql=sql,args=(username,),one=True)
+        if user:
+            # there is a user, check password matches
+            if check_password_hash(user[2],password):
+                # correct password, store username in session
+                session["user"] = user
+                flash("Logged in successfully")
+            else:
+                flash("Password incorrect")
+        else:
+            flash("Username does not exist")
+    return render_template("login.html")
+
+
+@ app.route("/signup", methods=["GET","POST"])
+def signup():
+    if request.method == "POST":
+        # add new username and password to database
+        username = request.form["username"]
+        password = request.form["password"]
+        # hash it
+        hashed_password = generate_password_hash(password)
+        # insert it
+        sql = "INSERT INTO user (username,password) VALUES (?,?)"
+        query_accounts(sql,(username,hashed_password))
+        flash("Sign up successful")
+    return render_template("signup.html")
+
+
+@app.route("/logout")
+def logout():
+    session["user"] = None
+    return redirect("/browsing/1")
 
 
 if __name__ == "__main__":
