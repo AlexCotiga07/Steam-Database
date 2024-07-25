@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1>{{username}}'s Dashboard</h1>
+
+<h3 class="page-title"><a href="/dashboard/{{page-1}}" class="{{previous}}"><</a> <div class = "title">Your favourited games</div> <a href="/dashboard/{{page+1}}" class="{{next_page}}">></a></h3>
+
+<div class="item-block">
+    {% for item in results %}
+    <div>
+        <a href="/game/{{item[0]}}">
+            <p>{{item[1]}}</p>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

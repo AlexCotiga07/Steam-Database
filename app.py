@@ -513,7 +513,7 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         # try to find this user in the database
-        sql = "SELECT * FROM user WHERE username = ?"
+        sql = "SELECT * FROM User WHERE username = ?"
         user = query_accounts(sql=sql,args=(username,),one=True)
         if user:
             # there is a user, check password matches
@@ -537,7 +537,7 @@ def signup():
         # hash it
         hashed_password = generate_password_hash(password)
         # insert it
-        sql = "INSERT INTO user (username,password) VALUES (?,?)"
+        sql = "INSERT INTO User (username,password,adminaccess) VALUES (?,?,0)"
         query_accounts(sql,(username,hashed_password))
         flash("Sign up successful")
     return render_template("signup.html")
@@ -547,6 +547,11 @@ def signup():
 def logout():
     session["user"] = None
     return redirect("/browsing/1")
+
+
+@app.route("/dashboard/<int:page>")
+def dashboard(page):
+    sql = "SELECT Game.id, Game.name WHERE "
 
 
 if __name__ == "__main__":
