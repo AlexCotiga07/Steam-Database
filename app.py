@@ -71,7 +71,7 @@ def browsing(page):
                                next_page=next_page)
 
 
-@app.route("/game/<int:id>")
+@app.route("/game/<int:id>", methods=["GET","POST"])
 def game(id):
     sql = "SELECT * FROM Game WHERE id = ?"
     game = query_db(sql, args=(id,), one=True)
@@ -166,6 +166,21 @@ def game(id):
             ON GamePublisher.publishid = Publisher.id \
             WHERE GamePublisher.gameid = ?"
         publishers = query_db(sql, args=(id,))
+
+        # if game is added to dashboard
+        if request.method == "POST":
+            if session["user"] == None:
+                return redirect("/login")
+            else:
+                username = session["user"]
+                print(username[1])
+                sql = "SELECT id FROM User WHERE username = ?"
+                user_id = query_db(sql,args=(username[1],),one=True)
+                print(user_id)
+                sql = "INSERT INTO UserGame (gameid, userid) VALUES (?,?)"
+                query_db(sql,args=(id,user_id[0]))
+                flash = "Added to list"
+
         return render_template("game.html",
                                game=game,
                                genres=genres,
@@ -179,7 +194,8 @@ def game(id):
                                percent_rating=percent_rating,
                                age_restrict=age_restrict,
                                average_pt=average_pt,
-                               median_pt=median_pt)
+                               median_pt=median_pt,
+                               id=id)
 
 
 @app.route('/search-results', methods=["get", "post"])
@@ -514,13 +530,13 @@ def login():
         password = request.form["password"]
         # try to find this user in the database
         sql = "SELECT * FROM User WHERE username = ?"
-        user = query_accounts(sql=sql,args=(username,),one=True)
+        user = query_db(sql=sql,args=(username,),one=True)
         if user:
             # there is a user, check password matches
             if check_password_hash(user[2],password):
                 # correct password, store username in session
                 session["user"] = user
-                flash("Logged in successfully")
+                flash(f"Welcome {username}")
             else:
                 flash("Password incorrect")
         else:
@@ -528,7 +544,7 @@ def login():
     return render_template("login.html")
 
 
-@ app.route("/signup", methods=["GET","POST"])
+@app.route("/signup", methods=["GET","POST"])
 def signup():
     if request.method == "POST":
         # add new username and password to database
@@ -538,7 +554,7 @@ def signup():
         hashed_password = generate_password_hash(password)
         # insert it
         sql = "INSERT INTO User (username,password,adminaccess) VALUES (?,?,0)"
-        query_accounts(sql,(username,hashed_password))
+        query_db(sql,(username,hashed_password))
         flash("Sign up successful")
     return render_template("signup.html")
 
@@ -547,6 +563,22 @@ def signup():
 def logout():
     session["user"] = None
     return redirect("/browsing/1")
+
+
+@app.route("/add_to_dashboard")
+def add_to_dashboard():
+    if request.method == "POST":
+        if session["user"] == None:
+            return redirect("/login")
+        else:
+            username = session["user"]
+            print(username[1])
+            sql = "SELECT id FROM User WHERE username = ?"
+            user_id = query_db(sql,args=(username[1],),one=True)
+            print(user_id)
+            sql = "INSERT INTO UserGame (gameid, userid) VALUES (?,?)"
+            query_db(sql,args=(id,user_id))
+            flash = "Added to list"
 
 
 @app.route("/dashboard/<int:page>")
