@@ -24,17 +24,6 @@ def query_db(sql, args=(), one=False):
     conn.close()
     return (results[0] if results else None) if one else results
 
-def query_accounts(sql, args=(), one=False):
-    """Connect and query (accounts), to collect data quicker.
-    Will return one item if one=True and can accept arguments as a tuple"""
-    conn = sqlite3.connect(ACCOUNT_DATABASE)
-    cursor = conn.cursor()
-    cursor.execute(sql, args)  # sql query and stuff that goes in the ?
-    results = cursor.fetchall()  # for reading from db
-    conn.commit()  # for making changes
-    conn.close()
-    return (results[0] if results else None) if one else results
-
 
 @app.route("/")
 def landing():
@@ -169,14 +158,12 @@ def game(id):
 
         # if game is added to dashboard
         if request.method == "POST":
-            if session["user"] == None:
+            if "user" not in session:
                 return redirect("/login")
             else:
                 username = session["user"]
-                print(username[1])
                 sql = "SELECT id FROM User WHERE username = ?"
                 user_id = query_db(sql,args=(username[1],),one=True)
-                print(user_id)
                 sql = "INSERT INTO UserGame (gameid, userid) VALUES (?,?)"
                 query_db(sql,args=(id,user_id[0]))
                 flash = "Added to list"
@@ -568,7 +555,7 @@ def logout():
 @app.route("/add_to_dashboard")
 def add_to_dashboard():
     if request.method == "POST":
-        if session["user"] == None:
+        if session["user"]:
             return redirect("/login")
         else:
             username = session["user"]
@@ -583,7 +570,47 @@ def add_to_dashboard():
 
 @app.route("/dashboard/<int:page>")
 def dashboard(page):
-    sql = "SELECT Game.id, Game.name WHERE "
+    if "user" not in session:
+        return redirect("/login")
+    else:
+        username = session["user"]
+        sql = "SELECT id FROM User WHERE username = ?"
+        user_id = query_db(sql,args=(username[1],),one=True)
+        # sql = "SELECT Game.id, Game.name FROM Game \
+        #        JOIN UserGame ON UserGame.gameid = Game.id \
+        #        WHERE UserGame.userid = ?"
+        # results = query_db(sql,args=(user_id[0],))
+
+        rows = query_db("SELECT COUNT(Game.name) FROM Game JOIN UserGame ON Game.id = UserGame.gameid WHERE UserGame.userid = ?", (user_id[0],))
+        if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
+            return render_template("404.html")
+        else:
+            offset = (page-1)*LIMIT
+            if (math.ceil(int(rows[0][0])/LIMIT)) == 1:
+                previous = "hide"
+                next_page = "hide"
+            elif page == 1:
+                previous = "hide"
+                next_page = "next-page"
+            elif page == (math.ceil(int(rows[0][0])/LIMIT)):
+                previous = "previous-page"
+                next_page = "hide"
+            else:
+                previous = "previous-page"
+                next_page = "next-page"
+            results = query_db("SELECT Game.id, Game.name \
+                                FROM Game \
+                                JOIN UserGame ON Game.id = UserGame.gameid \
+                                WHERE UserGame.userid = ? \
+                                ORDER BY Game.name \
+                                LIMIT ? OFFSET ?",
+                            (user_id[0], LIMIT, offset))
+            return render_template("dashboard.html",
+                                results=results,
+                                page=page,
+                                previous=previous,
+                                next_page=next_page,
+                                username=username[1])
 
 
 if __name__ == "__main__":
