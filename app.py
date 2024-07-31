@@ -158,7 +158,7 @@ def game(id):
 
         # if game is added to dashboard
         if request.method == "POST":
-            if "user" not in session:
+            if "user" not in session or session["user"] == None:
                 return redirect("/login")
             else:
                 username = session["user"]
@@ -542,7 +542,9 @@ def signup():
         # insert it
         sql = "INSERT INTO User (username,password,adminaccess) VALUES (?,?,0)"
         query_db(sql,(username,hashed_password))
+        session["user"] = username
         flash("Sign up successful")
+        return redirect("/dashboard/1")
     return render_template("signup.html")
 
 
@@ -552,25 +554,25 @@ def logout():
     return redirect("/browsing/1")
 
 
-@app.route("/add_to_dashboard")
-def add_to_dashboard():
-    if request.method == "POST":
-        if session["user"]:
-            return redirect("/login")
-        else:
-            username = session["user"]
-            print(username[1])
-            sql = "SELECT id FROM User WHERE username = ?"
-            user_id = query_db(sql,args=(username[1],),one=True)
-            print(user_id)
-            sql = "INSERT INTO UserGame (gameid, userid) VALUES (?,?)"
-            query_db(sql,args=(id,user_id))
-            flash = "Added to list"
+# @app.route("/add_to_dashboard")
+# def add_to_dashboard():
+#     if request.method == "POST":
+#         if session["user"]:
+#             return redirect("/login")
+#         else:
+#             username = session["user"]
+#             print(username[1])
+#             sql = "SELECT id FROM User WHERE username = ?"
+#             user_id = query_db(sql,args=(username[1],),one=True)
+#             print(user_id)
+#             sql = "INSERT INTO UserGame (gameid, userid) VALUES (?,?)"
+#             query_db(sql,args=(id,user_id))
+#             flash = "Added to list"
 
 
 @app.route("/dashboard/<int:page>")
 def dashboard(page):
-    if "user" not in session:
+    if "user" not in session or session["user"] == None:
         return redirect("/login")
     else:
         username = session["user"]
@@ -581,36 +583,42 @@ def dashboard(page):
         #        WHERE UserGame.userid = ?"
         # results = query_db(sql,args=(user_id[0],))
 
-        rows = query_db("SELECT COUNT(Game.name) FROM Game JOIN UserGame ON Game.id = UserGame.gameid WHERE UserGame.userid = ?", (user_id[0],))
+        rows = query_db("SELECT COUNT(Game.name) FROM Game \
+                         JOIN UserGame ON Game.id = UserGame.gameid \
+                         JOIN User ON UserGame.id = User.id \
+                         WHERE UserGame.userid = ?", (user_id[0],))
         if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
             return render_template("404.html")
         else:
-            offset = (page-1)*LIMIT
-            if (math.ceil(int(rows[0][0])/LIMIT)) == 1:
-                previous = "hide"
-                next_page = "hide"
-            elif page == 1:
-                previous = "hide"
-                next_page = "next-page"
-            elif page == (math.ceil(int(rows[0][0])/LIMIT)):
-                previous = "previous-page"
-                next_page = "hide"
+            if rows > 0:
+                offset = (page-1)*LIMIT
+                if (math.ceil(int(rows[0][0])/LIMIT)) == 1:
+                    previous = "hide"
+                    next_page = "hide"
+                elif page == 1:
+                    previous = "hide"
+                    next_page = "next-page"
+                elif page == (math.ceil(int(rows[0][0])/LIMIT)):
+                    previous = "previous-page"
+                    next_page = "hide"
+                else:
+                    previous = "previous-page"
+                    next_page = "next-page"
+                results = query_db("SELECT Game.id, Game.name \
+                                    FROM Game \
+                                    JOIN UserGame ON Game.id = UserGame.gameid \
+                                    WHERE UserGame.userid = ? \
+                                    ORDER BY Game.name \
+                                    LIMIT ? OFFSET ?",
+                                (user_id[0], LIMIT, offset))
+                return render_template("dashboard.html",
+                                    results=results,
+                                    page=page,
+                                    previous=previous,
+                                    next_page=next_page,
+                                    username=username[1])
             else:
-                previous = "previous-page"
-                next_page = "next-page"
-            results = query_db("SELECT Game.id, Game.name \
-                                FROM Game \
-                                JOIN UserGame ON Game.id = UserGame.gameid \
-                                WHERE UserGame.userid = ? \
-                                ORDER BY Game.name \
-                                LIMIT ? OFFSET ?",
-                            (user_id[0], LIMIT, offset))
-            return render_template("dashboard.html",
-                                results=results,
-                                page=page,
-                                previous=previous,
-                                next_page=next_page,
-                                username=username[1])
+                
 
 
 if __name__ == "__main__":
