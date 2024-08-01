@@ -5,14 +5,25 @@
 
 <h3 class="page-title"><a href="/dashboard/{{page-1}}" class="{{previous}}"><</a> <div class = "title">Your favourited games</div> <a href="/dashboard/{{page+1}}" class="{{next_page}}">></a></h3>
 
-<div class="item-block">
-    {% for item in results %}
-    <div>
-        <a href="/game/{{item[0]}}">
-            <p>{{item[1]}}</p>
-        </a>
+<div class="{{favourites}}">
+    <div class="item-block">
+        {% if not results %}
+        <div class="no-games">
+            <a href="/browsing/1">
+                <p>No saved games yet, why not add some?</p>
+            </a>
+        </div>
+
+        {% else %}
+            {% for item in results %}
+            <div class="games">
+                <a href="/game/{{item[0]}}">
+                    <p>{{item[1]}}</p>
+                </a>
+            </div>
+            {% endfor %}
+        {% endif %}
     </div>
-    {% endfor %}
 </div>
 
 {% endblock %}

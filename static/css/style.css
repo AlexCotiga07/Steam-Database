@@ -128,7 +128,7 @@ main {
     display: disc;
 }
 
-.not-compatible, .any-age {
+.not-compatible, .any-age, .no-favs .games, .favs .no-games {
     display: none;
 }
 
@@ -140,7 +140,7 @@ main {
     margin: 0 10px;
 }
 
-.age_restricted, .visible {
+.age_restricted, .visible, .no-favs .no-games, .favs .games {
     display: block;
 }
 

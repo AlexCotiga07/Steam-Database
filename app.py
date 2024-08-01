@@ -585,12 +585,13 @@ def dashboard(page):
 
         rows = query_db("SELECT COUNT(Game.name) FROM Game \
                          JOIN UserGame ON Game.id = UserGame.gameid \
-                         JOIN User ON UserGame.id = User.id \
+                         JOIN User ON UserGame.userid = User.id \
                          WHERE UserGame.userid = ?", (user_id[0],))
-        if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
-            return render_template("404.html")
-        else:
-            if rows > 0:
+        if rows[0][0] > 0:  # Check if there are actually any games
+            if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
+                return render_template("404.html")
+            else:
+                favourites = "favs"
                 offset = (page-1)*LIMIT
                 if (math.ceil(int(rows[0][0])/LIMIT)) == 1:
                     previous = "hide"
@@ -610,14 +611,27 @@ def dashboard(page):
                                     WHERE UserGame.userid = ? \
                                     ORDER BY Game.name \
                                     LIMIT ? OFFSET ?",
-                                (user_id[0], LIMIT, offset))
+                                   (user_id[0], LIMIT, offset))
                 return render_template("dashboard.html",
-                                    results=results,
-                                    page=page,
-                                    previous=previous,
-                                    next_page=next_page,
-                                    username=username[1])
-            else:
+                                       results=results,
+                                       page=page,
+                                       previous=previous,
+                                       next_page=next_page,
+                                       username=username[1],
+                                       favourites=favourites)
+        else:  # No games saved by this person
+            previous = "hide"
+            next_page = "hide"
+            favourites = "no-favs"
+            results = None
+            return render_template("dashboard.html",
+                                   results=results,
+                                   page=page,
+                                   previous=previous,
+                                   next_page=next_page,
+                                   username=username[1],
+                                   favourites=favourites)
+
                 
 
 
