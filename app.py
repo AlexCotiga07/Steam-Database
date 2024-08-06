@@ -156,17 +156,19 @@ def game(id):
             WHERE GamePublisher.gameid = ?"
         publishers = query_db(sql, args=(id,))
 
-        # if game is added to dashboard
-        if request.method == "POST":
-            if "user" not in session or session["user"] == None:
-                return redirect("/login")
+        # check if game is already on dashboard
+        if "user" in session:
+            if session["user"] != None:
+                sql = "SELECT * FROM UserGame WHERE gameid = ? AND userid = ?"
+                is_it_here = query_db(sql, (id, session["user"][0]), one=True)
+                if is_it_here:
+                    added = True
+                else:
+                    added = False
             else:
-                username = session["user"]
-                sql = "SELECT id FROM User WHERE username = ?"
-                user_id = query_db(sql,args=(username[1],),one=True)
-                sql = "INSERT INTO UserGame (gameid, userid) VALUES (?,?)"
-                query_db(sql,args=(id,user_id[0]))
-                flash = "Added to list"
+                added = False
+        else:
+            added = False
 
         return render_template("game.html",
                                game=game,
@@ -182,7 +184,8 @@ def game(id):
                                age_restrict=age_restrict,
                                average_pt=average_pt,
                                median_pt=median_pt,
-                               id=id)
+                               id=id,
+                               added=added)
 
 
 @app.route('/search-results', methods=["get", "post"])
@@ -578,15 +581,10 @@ def dashboard(page):
         username = session["user"]
         sql = "SELECT id FROM User WHERE username = ?"
         user_id = query_db(sql,args=(username[1],),one=True)
-        # sql = "SELECT Game.id, Game.name FROM Game \
-        #        JOIN UserGame ON UserGame.gameid = Game.id \
-        #        WHERE UserGame.userid = ?"
-        # results = query_db(sql,args=(user_id[0],))
-
         rows = query_db("SELECT COUNT(Game.name) FROM Game \
-                         JOIN UserGame ON Game.id = UserGame.gameid \
-                         JOIN User ON UserGame.userid = User.id \
-                         WHERE UserGame.userid = ?", (user_id[0],))
+                        JOIN UserGame ON Game.id = UserGame.gameid \
+                        JOIN User ON UserGame.userid = User.id \
+                        WHERE UserGame.userid = ?",(user_id,))
         if rows[0][0] > 0:  # Check if there are actually any games
             if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
                 return render_template("404.html")
@@ -611,28 +609,76 @@ def dashboard(page):
                                     WHERE UserGame.userid = ? \
                                     ORDER BY Game.name \
                                     LIMIT ? OFFSET ?",
-                                   (user_id[0], LIMIT, offset))
+                                (user_id[0], LIMIT, offset))
                 return render_template("dashboard.html",
-                                       results=results,
-                                       page=page,
-                                       previous=previous,
-                                       next_page=next_page,
-                                       username=username[1],
-                                       favourites=favourites)
+                                        results=results,
+                                        page=page,
+                                        previous=previous,
+                                        next_page=next_page,
+                                        username=username[1],
+                                        favourites=favourites)
         else:  # No games saved by this person
             previous = "hide"
             next_page = "hide"
             favourites = "no-favs"
             results = None
             return render_template("dashboard.html",
-                                   results=results,
-                                   page=page,
-                                   previous=previous,
-                                   next_page=next_page,
-                                   username=username[1],
-                                   favourites=favourites)
+                                    results=results,
+                                    page=page,
+                                    previous=previous,
+                                    next_page=next_page,
+                                    username=username[1],
+                                    favourites=favourites)
 
-                
+
+@app.route("/add_to_dash/<int:game_id>", methods=["POST","GET"])
+def add_to_dash(game_id):
+    if request.method == "POST":
+        if "user" not in session or session["user"] == None:
+            return redirect("/login")
+        else:
+            username = session["user"]
+            sql = "SELECT id FROM User WHERE username = ?"
+            user_id = query_db(sql,args=(username[1],),one=True)
+            sql = "INSERT INTO UserGame (gameid, userid) VALUES (?,?)"
+            query_db(sql,args=(game_id,user_id[0]))
+            flash = "Added to list"
+    return redirect(f"/game/{game_id}")
+    
+
+
+@app.route("/remove_from_dash/<int:game_id>", methods=["POST","GET"])
+def remove_from_dash(game_id):
+    if request.method == "POST":
+        username = session["user"]
+        sql = "SELECT id FROM User WHERE username = ?"
+        user_id = query_db(sql,args=(username[1],),one=True)
+        sql = "DELETE FROM UserGame WHERE gameid = ? AND userid = ?"
+        query_db(sql,args=(game_id,user_id[0]))
+    return redirect(f"/game/{game_id}")
+
+# if request.method == "POST":
+#             # game is added to dashboard
+#             if request.form["add"]:
+#                 if "user" not in session or session["user"] == None:
+#                     return redirect("/login")
+#                 else:
+#                     username = session["user"]
+#                     sql = "SELECT id FROM User WHERE username = ?"
+#                     user_id = query_db(sql,args=(username[1],),one=True)
+#                     sql = "INSERT INTO UserGame (gameid, userid) VALUES (?,?)"
+#                     query_db(sql,args=(id,user_id[0]))
+#                     flash = "Added to list"
+#             else:
+#                 if "user" not in session or session["user"] == None:
+#                     return redirect("/login")
+#                 else:
+#                     username = session["user"]
+#                     sql = "SELECT id FROM User WHERE username = ?"
+#                     user_id = query_db(sql,args=(username[1],),one=True)
+#                     sql = "DELETE FROM UserGame WHERE gameid = ? AND userid = ?"
+#                     query_db(sql,(id,username[0]))
+#                     flash = "Removed from list"
 
 
 if __name__ == "__main__":
