@@ -12,18 +12,19 @@
         <nav>
             {% include "nav.html" %}
         </nav>
+        <!-- message flashing so the user can get login updates -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flash-message">
+            {% for message in messages %}
+            <li>{{message}}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
         <main>
+            <!-- the actual content here -->
             {% block content %}{% endblock %}
-            <!-- message flashing so the user can get login updates -->
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul>
-                {% for message in messages %}
-                <li>{{message}}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            {% endwith %}
         </main>
         <footer>
             {% include "footer.html" %}

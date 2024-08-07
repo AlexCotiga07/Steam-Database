@@ -540,14 +540,25 @@ def signup():
         # add new username and password to database
         username = request.form["username"]
         password = request.form["password"]
-        # hash it
-        hashed_password = generate_password_hash(password)
-        # insert it
-        sql = "INSERT INTO User (username,password,adminaccess) VALUES (?,?,0)"
-        query_db(sql,(username,hashed_password))
-        session["user"] = username
-        flash("Sign up successful")
-        return redirect("/dashboard/1")
+        print(username)
+        # chack if username already exists
+        sql = "SELECT username FROM User WHERE username = ?"
+        exists = query_db(sql, args=(username,), one=True)
+        print(exists)
+        if exists:
+            flash("Username already exists")
+        else:
+            # hash the password
+            hashed_password = generate_password_hash(password)
+            # insert it
+            sql = "INSERT INTO User (username,password,adminaccess) VALUES (?,?,0)"
+            query_db(sql,(username,hashed_password))
+            # collect the data to have id as well
+            sql = "SELECT * FROM User WHERE username = ?"
+            user = query_db(sql=sql,args=(username,),one=True)
+            session["user"] = user
+            flash("Sign up successful")
+            return redirect("/dashboard/1")
     return render_template("signup.html")
 
 
@@ -578,12 +589,12 @@ def dashboard(page):
     if "user" not in session or session["user"] == None:
         return redirect("/login")
     else:
-        username = session["user"]
-        user_id = username[0]
+        user = session["user"]
+        user_id = user[0]
         rows = query_db("SELECT COUNT(Game.name) FROM Game \
                         JOIN UserGame ON Game.id = UserGame.gameid \
                         JOIN User ON UserGame.userid = User.id \
-                        WHERE UserGame.userid = ?",(user_id[0],))
+                        WHERE UserGame.userid = ?",(user_id,))
         if rows[0][0] > 0:  # Check if there are actually any games
             if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
                 return render_template("404.html")
@@ -608,13 +619,13 @@ def dashboard(page):
                                     WHERE UserGame.userid = ? \
                                     ORDER BY Game.name \
                                     LIMIT ? OFFSET ?",
-                                (user_id[0], LIMIT, offset))
+                                (user_id, LIMIT, offset))
                 return render_template("dashboard.html",
                                         results=results,
                                         page=page,
                                         previous=previous,
                                         next_page=next_page,
-                                        username=username[1],
+                                        username=user[1],
                                         favourites=favourites)
         else:  # No games saved by this person
             previous = "hide"
@@ -626,7 +637,7 @@ def dashboard(page):
                                     page=page,
                                     previous=previous,
                                     next_page=next_page,
-                                    username=username[1],
+                                    username=user[1],
                                     favourites=favourites)
 
 
