@@ -14,7 +14,7 @@ LIMIT = 50
 
 
 def query_db(sql, args=(), one=False):
-    """Connect and query (steam), to collect data quicker.
+    """Connect and query, to collect data quicker.
     Will return one item if one=True and can accept arguments as a tuple"""
     conn = sqlite3.connect(STEAM_DATABASE)
     cursor = conn.cursor()
@@ -579,12 +579,11 @@ def dashboard(page):
         return redirect("/login")
     else:
         username = session["user"]
-        sql = "SELECT id FROM User WHERE username = ?"
-        user_id = query_db(sql,args=(username[1],),one=True)
+        user_id = username[0]
         rows = query_db("SELECT COUNT(Game.name) FROM Game \
                         JOIN UserGame ON Game.id = UserGame.gameid \
                         JOIN User ON UserGame.userid = User.id \
-                        WHERE UserGame.userid = ?",(user_id,))
+                        WHERE UserGame.userid = ?",(user_id[0],))
         if rows[0][0] > 0:  # Check if there are actually any games
             if page < 1 or page > (math.ceil(int(rows[0][0])/LIMIT)):
                 return render_template("404.html")
