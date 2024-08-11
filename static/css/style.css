@@ -183,7 +183,7 @@ ul {
 
 .page-title {
     display: grid;
-    grid-template-columns: auto max-content auto;
+    grid-template-columns: 1.5fr 1fr 1.5fr;
     padding-left: auto;
     padding-right: auto;
     width: 100%;
@@ -191,6 +191,8 @@ ul {
 
 .page-title .title {
     text-align: center;
+    margin: 0 auto;
+    white-space: nowrap;
 }
 
 .title {
@@ -199,7 +201,7 @@ ul {
 }
 
 .next-page, .next-page:visited {
-    margin-left: 20px;
+    margin: 0;
     visibility: visible;
     background-color: #ddbea8;
     padding: 2px 15px;
@@ -209,7 +211,7 @@ ul {
 }
 
 .previous-page, .previous-page:visited {
-    margin-right: 20px;
+    margin-right: 0;
     margin-left: auto;
     visibility: visible;
     background-color: #ddbea8;
@@ -220,6 +222,15 @@ ul {
     float: inline-end;
 }
 
+.search-hint {
+    margin: 0;
+    background-color: #368f8b;
+    color: #160f29;
+    border-radius: 5px;
+    width: max-content;
+    padding: 0 0.5em;
+}
+
 /*-------------------------|
 |                          |
 |          FOOTER          |
@@ -228,4 +239,14 @@ ul {
 
 footer {
     border-top: #246a73 1px solid;
+    width: 100%;
+}
+
+a .credits {
+    float: right;
+    text-decoration: underline;
+}
+
+a .terms-of-use {
+    float: right;
 }

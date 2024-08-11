@@ -7,7 +7,10 @@
         <input type="text" placeholder="Search..." name="search-query" maxlength="50">
         <input type="submit" value="Submit">
     </form>
-    <a href="/login">Sign in</a>
-    <a href="/logout">Log out</a>
+    {% if session["user"] %}
+    <a href="/signout">Sign out</a>
     <a href="/dashboard/1">Dashboard</a>
+    {% else %}
+    <a href="/signin">Sign in</a>
+    {% endif %}
 </div>

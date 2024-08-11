@@ -512,8 +512,8 @@ def linux_browsing(page):
                                next_page=next_page)
 
 
-@app.route("/login", methods=["GET","POST"])
-def login():
+@app.route("/signin", methods=["GET","POST"])
+def signin():
     # if the user posts a username and password
     if request.method == "POST":
         username = request.form["username"]
@@ -540,54 +540,45 @@ def signup():
         # add new username and password to database
         username = request.form["username"]
         password = request.form["password"]
-        print(username)
-        # chack if username already exists
-        sql = "SELECT username FROM User WHERE username = ?"
-        exists = query_db(sql, args=(username,), one=True)
-        print(exists)
-        if exists:
-            flash("Username already exists")
+        password2 = request.form["password2"]
+        # check if username or password are too long or short (or nonexistent)
+        if len(username) < 5 or len(username) > 20:
+            flash("Username must be between 5 and 20 characters long")
+        elif len(password) < 5 or len(password) > 20:
+            flash("Password must be between 5 and 20 characters long")
+        elif password != password2:
+            flash("Passwords don't match")
         else:
-            # hash the password
-            hashed_password = generate_password_hash(password)
-            # insert it
-            sql = "INSERT INTO User (username,password,adminaccess) VALUES (?,?,0)"
-            query_db(sql,(username,hashed_password))
-            # collect the data to have id as well
-            sql = "SELECT * FROM User WHERE username = ?"
-            user = query_db(sql=sql,args=(username,),one=True)
-            session["user"] = user
-            flash("Sign up successful")
-            return redirect("/dashboard/1")
+            # chack if username already exists
+            sql = "SELECT username FROM User WHERE username = ?"
+            exists = query_db(sql, args=(username,), one=True)
+            if exists:
+                flash("Username already exists")
+            else:
+                # hash the password
+                hashed_password = generate_password_hash(password)
+                # insert it
+                sql = "INSERT INTO User (username,password,adminaccess) VALUES (?,?,0)"
+                query_db(sql,(username,hashed_password))
+                # collect the data to have id as well
+                sql = "SELECT * FROM User WHERE username = ?"
+                user = query_db(sql=sql,args=(username,),one=True)
+                session["user"] = user
+                flash("Sign up successful")
+                return redirect("/dashboard/1")
     return render_template("signup.html")
 
 
-@app.route("/logout")
-def logout():
+@app.route("/signout")
+def signout():
     session["user"] = None
     return redirect("/browsing/1")
-
-
-# @app.route("/add_to_dashboard")
-# def add_to_dashboard():
-#     if request.method == "POST":
-#         if session["user"]:
-#             return redirect("/login")
-#         else:
-#             username = session["user"]
-#             print(username[1])
-#             sql = "SELECT id FROM User WHERE username = ?"
-#             user_id = query_db(sql,args=(username[1],),one=True)
-#             print(user_id)
-#             sql = "INSERT INTO UserGame (gameid, userid) VALUES (?,?)"
-#             query_db(sql,args=(id,user_id))
-#             flash = "Added to list"
 
 
 @app.route("/dashboard/<int:page>")
 def dashboard(page):
     if "user" not in session or session["user"] == None:
-        return redirect("/login")
+        return redirect("/signin")
     else:
         user = session["user"]
         user_id = user[0]
@@ -645,7 +636,7 @@ def dashboard(page):
 def add_to_dash(game_id):
     if request.method == "POST":
         if "user" not in session or session["user"] == None:
-            return redirect("/login")
+            return redirect("/signin")
         else:
             username = session["user"]
             sql = "SELECT id FROM User WHERE username = ?"
