@@ -231,6 +231,10 @@ ul {
     padding: 0 0.5em;
 }
 
+.credits-link {
+    text-decoration: underline;
+}
+
 /*-------------------------|
 |                          |
 |          FOOTER          |
@@ -240,13 +244,21 @@ ul {
 footer {
     border-top: #246a73 1px solid;
     width: 100%;
+    overflow: hidden;
 }
 
-a .credits {
-    float: right;
+footer h2 {
+    font-size: 22px;
+}
+
+.footer .credits, .footer .terms-of-use {
+    margin: 0 10px;
+}
+
+.footer .credits:hover {
     text-decoration: underline;
 }
 
-a .terms-of-use {
-    float: right;
+.footer .terms-of-use:hover {
+    text-decoration: underline;
 }

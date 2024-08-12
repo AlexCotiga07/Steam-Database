@@ -658,28 +658,15 @@ def remove_from_dash(game_id):
         query_db(sql,args=(game_id,user_id[0]))
     return redirect(f"/game/{game_id}")
 
-# if request.method == "POST":
-#             # game is added to dashboard
-#             if request.form["add"]:
-#                 if "user" not in session or session["user"] == None:
-#                     return redirect("/login")
-#                 else:
-#                     username = session["user"]
-#                     sql = "SELECT id FROM User WHERE username = ?"
-#                     user_id = query_db(sql,args=(username[1],),one=True)
-#                     sql = "INSERT INTO UserGame (gameid, userid) VALUES (?,?)"
-#                     query_db(sql,args=(id,user_id[0]))
-#                     flash = "Added to list"
-#             else:
-#                 if "user" not in session or session["user"] == None:
-#                     return redirect("/login")
-#                 else:
-#                     username = session["user"]
-#                     sql = "SELECT id FROM User WHERE username = ?"
-#                     user_id = query_db(sql,args=(username[1],),one=True)
-#                     sql = "DELETE FROM UserGame WHERE gameid = ? AND userid = ?"
-#                     query_db(sql,(id,username[0]))
-#                     flash = "Removed from list"
+
+@app.route("/credits")
+def credits():
+    return render_template("credits.html")
+
+
+@app.route("/terms_of_use")
+def terms_of_use():
+    return render_template("terms.html")
 
 
 if __name__ == "__main__":
