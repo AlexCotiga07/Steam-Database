@@ -514,59 +514,66 @@ def linux_browsing(page):
 
 @app.route("/signin", methods=["GET","POST"])
 def signin():
-    # if the user posts a username and password
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        # try to find this user in the database
-        sql = "SELECT * FROM User WHERE username = ?"
-        user = query_db(sql=sql,args=(username,),one=True)
-        if user:
-            # there is a user, check password matches
-            if check_password_hash(user[2],password):
-                # correct password, store username in session
-                session["user"] = user
-                flash(f"Welcome {username}")
+    if "user" not in session or session["user"] == None:
+        # if the user posts a username and password
+        if request.method == "POST":
+            username = request.form["username"]
+            password = request.form["password"]
+            # try to find this user in the database
+            sql = "SELECT * FROM User WHERE username = ?"
+            user = query_db(sql=sql,args=(username,),one=True)
+            if user:
+                # there is a user, check password matches
+                if check_password_hash(user[2],password):
+                    # correct password, store username in session
+                    session["user"] = user
+                    flash(f"Welcome {username}")
+                    return redirect("/dashboard/1")
+                else:
+                    flash("Password incorrect")
             else:
-                flash("Password incorrect")
-        else:
-            flash("Username does not exist")
-    return render_template("login.html")
+                flash("Username does not exist")
+        return render_template("login.html")
+    else:
+        return redirect("/dashboard/1")
 
 
 @app.route("/signup", methods=["GET","POST"])
 def signup():
-    if request.method == "POST":
-        # add new username and password to database
-        username = request.form["username"]
-        password = request.form["password"]
-        password2 = request.form["password2"]
-        # check if username or password are too long or short (or nonexistent)
-        if len(username) < 5 or len(username) > 20:
-            flash("Username must be between 5 and 20 characters long")
-        elif len(password) < 5 or len(password) > 20:
-            flash("Password must be between 5 and 20 characters long")
-        elif password != password2:
-            flash("Passwords don't match")
-        else:
-            # chack if username already exists
-            sql = "SELECT username FROM User WHERE username = ?"
-            exists = query_db(sql, args=(username,), one=True)
-            if exists:
-                flash("Username already exists")
+    if "user" not in session or session["user"] == None:
+        if request.method == "POST":
+            # add new username and password to database
+            username = request.form["username"]
+            password = request.form["password"]
+            password2 = request.form["password2"]
+            # check if username or password are too long or short (or nonexistent)
+            if len(username) < 5 or len(username) > 20:
+                flash("Username must be between 5 and 20 characters long")
+            elif len(password) < 5 or len(password) > 20:
+                flash("Password must be between 5 and 20 characters long")
+            elif password != password2:
+                flash("Passwords don't match")
             else:
-                # hash the password
-                hashed_password = generate_password_hash(password)
-                # insert it
-                sql = "INSERT INTO User (username,password,adminaccess) VALUES (?,?,0)"
-                query_db(sql,(username,hashed_password))
-                # collect the data to have id as well
-                sql = "SELECT * FROM User WHERE username = ?"
-                user = query_db(sql=sql,args=(username,),one=True)
-                session["user"] = user
-                flash("Sign up successful")
-                return redirect("/dashboard/1")
-    return render_template("signup.html")
+                # chack if username already exists
+                sql = "SELECT username FROM User WHERE username = ?"
+                exists = query_db(sql, args=(username,), one=True)
+                if exists:
+                    flash("Username already exists")
+                else:
+                    # hash the password
+                    hashed_password = generate_password_hash(password)
+                    # insert it
+                    sql = "INSERT INTO User (username,password,adminaccess) VALUES (?,?,0)"
+                    query_db(sql,(username,hashed_password))
+                    # collect the data to have id as well
+                    sql = "SELECT * FROM User WHERE username = ?"
+                    user = query_db(sql=sql,args=(username,),one=True)
+                    session["user"] = user
+                    flash("Sign up successful")
+                    return redirect("/dashboard/1")
+        return render_template("signup.html")
+    else:
+        return redirect("/dashboard/1")
 
 
 @app.route("/signout")

@@ -1,17 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h1>Login</h1>
+<h1>Sign in</h1>
 <!-- A form to login with -->
 <!-- POST to the LOGIN route this is set by the action value -->
 <form action="/signin" method="post">
-    <label for="username">Username</label>
-    <input type="text" name="username" maxlength="20">
-    <label for="password">Password</label>
-    <input type="password" name="password" maxlength="20">
-    <button type="submit">Login</button>
+    <label for="username">Username</label><br>
+    <input type="text" name="username" maxlength="20"><br><br>
+    <label for="password">Password</label><br>
+    <input type="password" name="password" maxlength="20"><br><br>
+    <button type="submit">Sign in</button>
 </form>
 
-<p>Dont have an account? <a href="/signup">Signup</a></p>
+<p>Dont have an account? <a href="/signup" class="signup">Sign up</a></p>
 
 {% endblock %}
