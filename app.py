@@ -551,6 +551,8 @@ def signup():
                 flash("Username must be between 5 and 20 characters long")
             elif len(password) < 5 or len(password) > 20:
                 flash("Password must be between 5 and 20 characters long")
+            elif " " in username or " " in password:
+                flash("Username and password cannot include whitespace")
             elif password != password2:
                 flash("Passwords don't match")
             else:
