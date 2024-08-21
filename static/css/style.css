@@ -222,13 +222,14 @@ ul {
     float: inline-end;
 }
 
+.search-title {
+    margin: 10px 0 5px 0;
+}
+
 .search-hint {
     margin: 0;
-    background-color: #368f8b;
-    color: #160f29;
-    border-radius: 5px;
-    width: max-content;
-    padding: 0 0.5em;
+    font-size: small;
+    padding: 0 0 15px 0;
 }
 
 .credits-link {
@@ -236,6 +237,27 @@ ul {
 }
 
 .signup {
+    text-decoration: underline;
+}
+
+.game-info-button input {
+    margin: 5px 0 0 5px;
+    background-color: #368f8b;
+    color: #160f29;
+    border: none;
+    border: #246a73 solid 1px;
+    border-radius: 5px;
+}
+
+.game-info-button input:hover {
+    cursor: pointer;
+}
+
+.game-name-link p, .game-name-div {
+    width: max-content;
+}
+
+.game-name-link:hover {
     text-decoration: underline;
 }
 

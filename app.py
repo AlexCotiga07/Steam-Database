@@ -53,7 +53,7 @@ def browsing(page):
                             FROM Game \
                             ORDER BY name LIMIT ? OFFSET ?",
                            (LIMIT, offset))
-        return render_template("index.html",
+        return render_template("browsing.html",
                                results=results,
                                page=page,
                                previous=previous,
@@ -581,6 +581,7 @@ def signup():
 @app.route("/signout")
 def signout():
     session["user"] = None
+    flash("Signed out successfully")
     return redirect("/browsing/1")
 
 

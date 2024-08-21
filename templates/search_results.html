@@ -1,13 +1,13 @@
 {% extends "layout.html"%}
 {% block content %}
 
-<h3>Showing results for "{{item}}"</h3>
+<h3 class="search-title">Showing results for "{{item}}"</h3>
 <h4 class="search-hint">If you can't find your game, try narrowing your search. Maybe your search is too vague?</h4>
 
 <div class="item-block">
     {% for item in results %}
-    <div>
-        <a href="game/{{item[0]}}">
+    <div class="game-name-div">
+        <a href="game/{{item[0]}}" class="game-name-link">
             <p>{{item[1]}}</p>
         </a>
     </div>

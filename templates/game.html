@@ -65,12 +65,12 @@
 </div>
 
 {% if added == True %}
-<form action="/remove_from_dash/{{id}}" method="post">
+<form action="/remove_from_dash/{{id}}" method="post" class="game-info-button">
     <input type="submit" value="Remove game from list">
 </form>
 
 {% else %}
-<form action="/add_to_dash/{{id}}" method="post">
+<form action="/add_to_dash/{{id}}" method="post" class="game-info-button">
     <input type="submit" value="Add game to list">
 </form>
 
